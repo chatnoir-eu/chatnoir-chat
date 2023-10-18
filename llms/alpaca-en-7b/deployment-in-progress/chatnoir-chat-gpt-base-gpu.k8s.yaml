@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatnoir-chat-gpt2-base
+  namespace: services-chatnoir
+spec:
+  selector:
+    app: chatnoir-chat-gpt2-base
+  ports:
+  - name: ui
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatnoir-chat-gpt2-base
+  namespace: services-chatnoir
+spec:
+  selector:
+    matchLabels:
+      app: chatnoir-chat-gpt2-base
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: chatnoir-chat-gpt2-base
+    spec:
+      containers:
+      - name: chatnoir-chat-gpt2-base
+        image: registry.webis.de/code-lib/public-images/chatnoir-chat-gpt2-base:0.0.1
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 20Gi
+            cpu: 2
+            nvidia.com/gpu: 1
+          limits:
+            memory: 40Gi
+            cpu: 3
+            nvidia.com/gpu: 1
+      tolerations:
+      - key: "special"
+        operator: "Equal"
+        value: "gpu"
+        effect: "NoSchedule"
+      nodeSelector:
+        accelerator: nvidia-1080

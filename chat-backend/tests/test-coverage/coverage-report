@@ -1,0 +1,16 @@
+Name                                                                             Stmts   Miss  Cover
+----------------------------------------------------------------------------------------------------
+/workspaces/chatnoir-web/chatnoir_chat_in_progress/chatnoir_chat/__init__.py         0      0   100%
+/workspaces/chatnoir-web/chatnoir_chat_in_progress/chatnoir_chat/chat_cache.py      23     18    22%
+/workspaces/chatnoir-web/chatnoir_chat_in_progress/chatnoir_chat/models.py          10      0   100%
+/workspaces/chatnoir-web/chatnoir_chat_in_progress/chatnoir_chat/settings.py        24      1    96%
+/workspaces/chatnoir-web/chatnoir_chat_in_progress/chatnoir_chat/urls.py             2      0   100%
+/workspaces/chatnoir-web/chatnoir_chat_in_progress/manage.py                        12      2    83%
+__init__.py                                                                          2      0   100%
+settings_test.py                                                                     6      2    67%
+test_cache_for_count_endpoint.py                                                    11      9    18%
+test_cache_for_echo_endpoint.py                                                     35     33     6%
+test_endpoint_returns_405_if_not_authenticated.py                                   18     16    11%
+test_if_entries_are_in_cache.py                                                      9      7    22%
+----------------------------------------------------------------------------------------------------
+TOTAL                                                                              152     88    42%

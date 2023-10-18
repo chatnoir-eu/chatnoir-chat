@@ -1,0 +1,31 @@
+FROM webis/tira-ir-datasets-starter:0.0.48-clueweb22-touche23
+
+RUN rm -Rf /tira \
+	&& mkdir /workspace \
+	&& cd /workspace \
+	&& apk add libffi-dev \
+	&& pip3 install jupyter
+
+RUN apk add openjdk11
+
+RUN pip3 install nltk
+
+RUN pip3 install python-terrier
+
+RUN python3 -c 'import nltk; nltk.download("punkt")'
+
+RUN pip3 install chatnoir-pyterrier chatnoir-api dataclasses_json marshmallow typing_inspect mypy_extensions marshmallow_enum --no-dependencies
+
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk/
+
+WORKDIR /workspace
+
+ENV LD_LIBRARY_PATH=/usr/lib/jvm/java-11-openjdk/lib/server/
+
+RUN python3 -c 'import pyterrier as pt; pt.init()'
+
+RUN pip3 uninstall -y pandas \
+	&& pip3 install pandas==1.5.3
+
+RUN pip3 install flask
+

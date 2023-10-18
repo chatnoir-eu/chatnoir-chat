@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="{% static 'favicon.ico' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatCat: Your Friendly Cat Assistant</title>
+    <script type="module" crossorigin src="{% static 'entries/index.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'assets-public/index.css' %}">
+</head>
+
+<body>
+    {% csrf_token %}
+    <div id="app"></div>
+    <script>
+        setTimeout(function() {
+            try {
+                //this is intended to enable browser back/forth buttons
+                register_app()
+            } catch (Error) {}
+        }, 50);
+    </script>
+</body>
+</html>

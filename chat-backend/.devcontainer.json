@@ -1,0 +1,9 @@
+{
+  "image": "webis/chatnoir-chat:0.0.1-dev",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance"]
+    }
+  },
+  "runArgs": ["--network=host"]
+}

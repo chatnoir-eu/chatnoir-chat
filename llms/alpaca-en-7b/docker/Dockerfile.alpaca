@@ -1,0 +1,13 @@
+FROM registry.webis.de/code-lib/public-images/chatnoir-chat:0.0.1-basis
+
+RUN mkdir /workspace/alpaca-7b
+
+ADD alpaca/7b/added_tokens.json alpaca/7b/special_tokens_map.json alpaca/7b/trainer_state.json alpaca/7b/special_tokens_map.json alpaca/7b/trainer_state.json alpaca/7b/special_tokens_map.json alpaca/7b/trainer_state.json alpaca/7b/pytorch_model.bin.index.json alpaca/7b/tokenizer_config.json alpaca/7b/special_tokens_map.json alpaca/7b/trainer_state.json alpaca/7b/special_tokens_map.json alpaca/7b/trainer_state.json alpaca/7b/special_tokens_map.json alpaca/7b/trainer_state.json alpaca/7b/config.json alpaca/7b/training_args.bin alpaca/7b/pytorch_model.bin.index.json alpaca/7b/tokenizer_config.json alpaca/7b/tokenizer.model /workspace/alpaca-7b/
+
+ADD alpaca/7b/pytorch_model-00001-of-00003.bin /workspace/alpaca-7b/
+
+ADD alpaca/7b/pytorch_model-00002-of-00003.bin /workspace/alpaca-7b/
+
+ADD alpaca/7b/pytorch_model-00003-of-00003.bin /workspace/alpaca-7b/
+
+ENTRYPOINT ["python3", "/workspace/flask_api.py", "--input_model", "/workspace/alpaca-7b/"]

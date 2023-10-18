@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatnoir-chat
+  namespace: services-chatnoir
+spec:
+  selector:
+    app: chatnoir-chat
+  ports:
+  - name: ui
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatnoir-chat
+  namespace: services-chatnoir
+spec:
+  selector:
+    matchLabels:
+      app: chatnoir-chat
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: chatnoir-chat
+    spec:
+      containers:
+      - name: chatnoir-chat
+        image: registry.webis.de/code-lib/public-images/chatnoir-chat:0.0.1
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 100Gi
+            cpu: 24
+          limits:
+            memory: 200Gi
+            cpu: 24
+      tolerations:
+      - key: "special"
+        operator: "Equal"
+        value: "gpu"
+        effect: "NoSchedule"
+      nodeSelector:
+        accelerator: nvidia-1080

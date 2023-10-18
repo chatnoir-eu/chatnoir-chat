@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatnoir-chat-gpu
+  namespace: services-chatnoir
+spec:
+  selector:
+    app: chatnoir-chat-gpu
+  ports:
+  - name: ui
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatnoir-chat-gpu
+  namespace: services-chatnoir
+spec:
+  selector:
+    matchLabels:
+      app: chatnoir-chat-gpu
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: chatnoir-chat-gpu
+    spec:
+      containers:
+      - name: chatnoir-chat
+        image: registry.webis.de/code-lib/public-images/chatnoir-chat:0.0.8
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 70Gi
+            cpu: 4
+            nvidia.com/mig-7g.40gb: 1
+          limits:
+            memory: 100Gi
+            cpu: 6
+            nvidia.com/mig-7g.40gb: 1
+      runtimeClassName: nvidia
+      tolerations:
+      - key: "special"
+        operator: "Equal"
+        value: "gpu"
+        effect: "NoSchedule"
+      nodeSelector:
+        accelerator: nvidia-a100

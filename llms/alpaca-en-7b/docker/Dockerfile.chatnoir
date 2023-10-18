@@ -1,0 +1,5 @@
+FROM registry.webis.de/code-lib/public-images/chatnoir-chat:0.0.1-alpaca
+
+ADD flask_api.py run_inference.py /workspace/
+
+ENTRYPOINT ["python3", "/workspace/flask_api.py", "--input_model", "/workspace/alpaca-7b/"]

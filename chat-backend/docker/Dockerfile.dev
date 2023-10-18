@@ -1,0 +1,21 @@
+FROM ubuntu:22.04
+
+RUN apt-get update \
+	&& apt-get upgrade -y \
+	&& apt-get install -y python3 python3-pip python-is-python3 mysql-client nginx \
+	&& apt-get install -y gcc default-libmysqlclient-dev pkg-config \
+	&& rm -Rf /var/cache/apt \
+	&& rm -Rf /root/.cache/pip
+
+ADD requirements.txt /requirements.txt
+ADD chatnoir_chat/chatnoir_chat_nginx.conf /etc/nginx/nginx.conf
+
+RUN mkdir /var/run/app-uwsgi \
+	&& mkdir -p /usr/share/nginx/logs/ \
+	&& chown -R www-data:www-data /usr/share/nginx/logs/ \
+	&& chown -R www-data:www-data /var/run/app-uwsgi \
+	&& pip3 install -r /requirements.txt \
+	&& rm /requirements.txt \
+	&& rm -Rf /root/.cache/pip \
+	&& rm /etc/nginx/sites-enabled/default
+

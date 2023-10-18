@@ -1,0 +1,6 @@
+FROM registry.webis.de/code-lib/public-images/chatnoir-chat:0.0.1-basis
+
+ADD gpt2/gpt2-xl /workspace/gpt2-xl
+
+ENTRYPOINT ["python3", "/workspace/flask_api.py", "--input_model", "/workspace/gpt2-xl/"]
+

@@ -1,0 +1,206 @@
+<template>
+<v-app ref="app" class="app-layout">
+    <v-toolbar :elevation="8">
+        <v-toolbar-title>
+            <v-avatar
+                :image="chatNoirIcon"></v-avatar>
+        </v-toolbar-title>
+
+        <v-text-field
+            class="my-6"
+            variant="filled"
+            color="#ca4525"
+            label="Title of Conversation"
+            hide-details="true"
+            density="compact"
+        ></v-text-field>
+
+        <v-btn
+            class="ma-2"
+            icon
+            @click.stop="drawer = !drawer"
+        >
+            <v-icon>mdi-menu</v-icon>
+        </v-btn>
+    </v-toolbar>
+
+    <v-navigation-drawer
+        v-model="drawer"
+        location="right"
+    >
+        <v-list-item
+            prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
+            title="Unknown user"
+        ></v-list-item>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav>
+            <v-list-item prepend-icon="mdi-plus" title="New Chat" value="home"></v-list-item>
+            <v-divider></v-divider>
+            <v-list-subheader>Your History</v-list-subheader>
+            <v-list-item prepend-icon="mdi-chat" title="2023-08-12.12:48:02" value="about"></v-list-item>
+            <v-list-item prepend-icon="mdi-chat" title="2023-08-12.12:48:02" value="about"></v-list-item>
+        </v-list>
+    </v-navigation-drawer>
+
+    <v-main class="main-content">
+        <v-container>
+            <v-row>
+                <v-select
+                    class="pt-5 "
+                    :items="items"
+                    variant="solo-filled"
+                    placeholder="Select a Chat Model"
+                >
+                    <v-item>test</v-item>
+                </v-select>
+            </v-row>
+
+
+            <v-row
+                v-for="message in messages"
+                :key="message.id"
+            >
+                <v-col cols="12">
+                    <v-card :class="message.id % 2 === 0 ? 'me-2': 'ms-2'">
+                        <v-toolbar v-if="message.id % 2 === 0"
+                                   density="compact"
+                                   color="white"
+                        >
+                            <template #prepend>
+                                <template v-if="message.id % 2 === 0" class="d-flex align-top">
+                                    <v-avatar
+                                        class="mr-2"
+                                        color="white"
+                                        :image="chatNoirAvatar"></v-avatar>
+                                    ChatNoir
+                                </template>
+                            </template>
+
+
+
+                            <template #append>
+                                <v-btn></v-btn>
+                                <v-menu>
+                                    <template #activator="{ props }">
+                                        <v-btn
+                                            v-bind="props"
+                                            icon="mdi-dots-vertical"
+                                        >
+                                        </v-btn>
+                                    </template>
+
+                                    <v-list>
+                                        <v-list-item>
+                                            <v-list-item-title>References</v-list-item-title>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-title>Sources</v-list-item-title>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-menu>
+                            </template>
+                        </v-toolbar>
+
+                        <v-toolbar v-if="message.id % 2 === 1"
+                                   density="compact"
+                                   color="white"
+                        >
+                            <template #append>
+                                <v-avatar color="#ffffff">
+                                    <v-img :src="userAvatar"></v-img>
+                                </v-avatar>
+                            </template>
+                        </v-toolbar>
+
+                        <v-list-item>
+                            <v-card-text>
+                                {{ message.text }}
+                            </v-card-text>
+                        </v-list-item>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-main>
+
+    <v-container :elevation="8" class="fixed-bottom-container">
+        <v-lazy>
+            <v-textarea
+                :elevation="12"
+                hide-details
+                placeholder="Type your message here"
+                auto-grow
+                rows="1"
+                max-rows="3"
+                variant="solo"
+                append-icon="mdi-send"
+                @click:append="sendMessage"
+            ></v-textarea>
+        </v-lazy>
+    </v-container>
+</v-app>
+</template>
+<style scoped>
+.fixed-bottom-container {
+  position: sticky;
+  bottom: 0;
+  background: white;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column; /* children are stacked vertically */
+  height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1; /* take all available space */
+  overflow-y: auto; /* scroll when content is too much */
+}
+
+</style>
+
+<script>
+export default {
+    data: () => ({
+        messages: [{id: 0, text: "Hello World"},
+                   {id: 1, text: "Hello World 2"},
+                   {id: 2, text: "Hello World 3"},
+                   {id: 3, text: "jasldkf"},
+                   {id: 4, text: "Hello World 4"},
+                   {id: 5, text: "Hello World 5"},
+                   {id: 6, text: "Hello World 6"},
+                   {id: 7, text: "Hello World 7"},
+                   {id: 8, text: "Hello World 8"},
+                   {id: 9, text: "Hello World 9"},
+                   {id: 10, text: "Hello World 10"},
+                   {id: 11, text: "Hello World 11"},
+                   {id: 12, text: "Hello World 12"},
+                   {id: 13, text: "Hello World 13"},
+                   {id: 14, text: "orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
+                   {id: 15, text: "Hello World 15Hello World 15Hello World 15Hello World 15Hello World 15Hello World 15Hello World 15Hello World 15Hello World 15" +
+                       "Hello World 15Hello World 15Hello World 15Hello World 15Hello World 15Hello World 15Hello World 15"},
+        ],
+        chatNoirAvatar: require('@/assets/img/chatnoir-chat-avatar.svg'),
+        chatNoirIcon: require('@/assets/img/chatnoir-icon.svg'),
+        userAvatar: "https://randomuser.me/api/portraits/men/78.jpg",
+        drawer: null,
+        selectedChatbot: null,
+        items: [
+            'Eigenes Model hinzufügen',
+            'Chat Model 1',
+            'Chat Model 2',
+            'Chat Model 3',
+            'Chat Model 4',
+            'Chat Model 5',
+        ],
+
+    }),
+
+    methods: {
+
+    },
+}
+</script>
