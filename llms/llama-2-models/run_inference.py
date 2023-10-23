@@ -1,35 +1,25 @@
 #a python script for inference on a single example using LlAMA model
 import argparse
-import json
-import os
-import random
-import re
-import string
-from functools import partial
-from multiprocessing import Pool
-import numpy as np
-import tqdm
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoModelForCausalLM, AutoTokenizer
 import torch
 
-PROMPT_DICT = {
-    "prompt_input": (
-        "Below is an instruction that describes a task, paired with an input that provides further context. "
-        "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:"
-    ),
-    "prompt_no_input": (
-        "Below is an instruction that describes a task. "
-        "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Response:"
-    ),
-}
+B_INST, E_INST = "[INST]", "[/INST]"
+B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
+BOS, EOS = "<s>", "</s>"
 
+assistant_prompt = ""
+
+
+llama_prompt = f"{BOS}{B_INST} {B_SYS}\n" \
+                f"{assistant_prompt}\n" \
+                f"{E_SYS}\n\n" \
+                "{input}" \
+                f"{E_INST} Response:"
 
 def run_inference(input_sentence, tokenizer, model, device):
     # get output of the LlaMa from input sentence
 
-    input_sentence = PROMPT_DICT["prompt_no_input"].format(instruction=input_sentence)
+    input_sentence = llama_prompt.format(input=input_sentence)
 
     input_ids = tokenizer.encode(input_sentence, return_tensors="pt").to(device)
     attention_mask = torch.ones(input_ids.shape, dtype=torch.long, device=device)
@@ -45,7 +35,7 @@ def run_inference(input_sentence, tokenizer, model, device):
         pad_token_id=tokenizer.pad_token_id,
     )
     output_sentence = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-    output_sentence = output_sentence.split("### Response:")[1]
+    output_sentence = output_sentence.split("Response:")[1]
     print(output_sentence)
     return output_sentence
 
@@ -53,14 +43,9 @@ def load_model(model_path):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     print(f'Load model using Device "{device}" from path "{model_path}".')
 
-    if 'alpaca' in str(model_path).lower():
-        print('Use Llama.')
-        tokenizer = LlamaTokenizer.from_pretrained(model_path)
-        model = LlamaForCausalLM.from_pretrained(model_path).to(device)
-    else:
-        print('Use AutoModel.')
-        tokenizer = AutoTokenizer.from_pretrained(model_path)
-        model = AutoModelForCausalLM.from_pretrained(model_path).to(device)
+    tokenizer = LlamaTokenizer.from_pretrained(model_path)
+    model = LlamaForCausalLM.from_pretrained(model_path).to(device)
+
 
     return tokenizer, model, device
 
