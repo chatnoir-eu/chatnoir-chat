@@ -133,14 +133,10 @@ export default {
 </script>
 <style scoped>
 .fixed-input {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+
   width: 100%;
-  max-height: 50vh;
-  z-index: 2; /* Make sure it's above the chat messages */
-  padding: 1em 1em; /* Some padding, adjust as needed */
-  margin-top: 8em;
+  z-index:0; /* Make sure it's above the chat messages */
+  padding: 0 16px; /* Some padding, adjust as needed */
   background-color: white; /* Background color to cover messages underneath */
 }
 
