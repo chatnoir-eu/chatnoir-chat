@@ -9,17 +9,17 @@
     <v-card>
       <h3 class="text-center">Assessment Area</h3>
       <v-tabs
-        v-model="tab"
+        v-model="localAnnotationView"
         color="red"
         align-tabs="center"
       >
-        <v-tab value="one">Conversation</v-tab>
-        <v-tab value="two">Single Utterance</v-tab>
+        <v-tab value="conversation">Conversation</v-tab>
+        <v-tab value="utterance">Single Utterance</v-tab>
       </v-tabs>
 
       <v-card-text>
-        <v-window v-model="tab">
-          <v-window-item class="text-center" value="one">
+        <v-window v-model="localAnnotationView">
+          <v-window-item class="text-center" value="conversation">
             <div v-if="conversationAnnotation">
               <div v-for="(question, index) in conversationAnnotation" :key="question.question_id">
                 <div class="d-inline text-center" v-if="question.response_type === 'Yes/No'">
@@ -54,7 +54,7 @@
 
           </v-window-item>
 
-          <v-window-item class="text-center" value="two">
+          <v-window-item class="text-center" value="utterance">
             Click on an utterance to start annotating it. [NOT WORKING YET]
           </v-window-item>
         </v-window>
@@ -70,6 +70,10 @@ import {ConversationAnnotation} from '@/types';
 
 export default {
   props: {
+    annotationView: {
+      type: String,
+      required: true
+    },
     conversationAnnotation: {
       type: Object as () => ConversationAnnotation | null,
       required: true
@@ -80,12 +84,12 @@ export default {
     // }
   },
   // emits: ['update:conversationAnnotation', 'update:utteranceAnnotations'],
-  emits: ['update:conversationAnnotation'],
+  emits: ['update:conversationAnnotation', 'update:annotationView'],
 
   data() {
     return {
       localInput: this.modelValue,
-      tab: "one",
+      localAnnotationView: this.annotationView,
       conversationAnswers: [] as (string | null)[],
       // utteranceAnswers: [],
     };
@@ -104,6 +108,10 @@ export default {
     //     this.$emit('update:utteranceAnnotations', this.utteranceAnnotations);
     //   }
     // },
+
+    localAnnotationView(newValue) {
+      this.$emit('update:annotationView', newValue);
+    },
     conversationAnswers: {
       deep: true,
       handler() {

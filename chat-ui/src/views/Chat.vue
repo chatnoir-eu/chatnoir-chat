@@ -29,8 +29,14 @@
       </v-row>
 
       <v-row class="px-xl-16" v-for="message in messages" :key="message.id">
-        <ChatMessage :message="message" chat-noir-avatar="/assets/img/chatnoir-chat-avatar.svg"
-                     :user-avatar="user.userAvatar"/>
+        <ChatMessage
+            :isSelectable="annotationView === 'utterance'"
+            :selectedMessageId="currentAnnotationMessageId"
+            :message="message"
+            chat-noir-avatar="/assets/img/chatnoir-chat-avatar.svg"
+            :user-avatar="user.userAvatar"
+            @update:currentAnnotationMessageId="updateCurrentAnnotationMessageId"
+        />
       </v-row>
     </v-container>
     <AddChatmodelDialogue v-model="addChatModelModalIsOpen" :addNewChatModelFunction="addNewChatModel"/>
@@ -49,8 +55,11 @@
 
 
     <AssessmentArea v-if="chatIsFinished"
+                    :currentAnnotationMessageId="currentAnnotationMessageId"
+                    :annotationView="annotationView"
                     :conversationAnnotation="conversationAnnotation"
                     @update:conversationAnnotation="updateConversationAnnotation"
+                    @update:annotationView="annotationView = $event"
     />
 
     <FooterTextarea
@@ -133,6 +142,8 @@ export default {
     chatId: extractChatIdFromUrl(),
     chatTitle: "",
     chatDescription: "",
+    annotationView: "conversation",
+    currentAnnotationMessageId: -1,
     // utteranceAnnotations: null as UtteranceAnnotation[] | null,
   }),
   beforeMount() {
@@ -209,7 +220,12 @@ export default {
       this.conversationAnnotation = updatedAnnotation;
       console.log("Updated conversationAnnotation:", this.conversationAnnotation);
       post('/annotate-chat/' + this.chatId, this.conversationAnnotation, this);
-    }
+    },
+    updateCurrentAnnotationMessageId(messageId: number) {
+      console.log("updateCurrentAnnotationMessageId: ", messageId)
+      this.currentAnnotationMessageId = messageId;
+    },
+
   },
 }
 </script>
