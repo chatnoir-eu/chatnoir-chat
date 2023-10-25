@@ -1,10 +1,10 @@
 <template>
   <div class="fixed-input">
     <v-divider :thickness="1" color="black"></v-divider>
-    <v-textarea class="px-xl-16 mt-4" :value="localInput" hide-details placeholder="Type your message here"
-                auto-grow rows="1" max-rows="3" variant="outlined" @input="handleInput">
+    <v-textarea class="px-xl-16 mt-4" v-model="localInput" hide-details placeholder="Type your message here"
+                auto-grow rows="1" max-rows="3" variant="outlined">
       <template #append-inner>
-        <v-btn v-if="modelValue.trim().length > 0" variant="text" icon @click.stop="emitSendMessage">
+        <v-btn v-if="modelValue.trim().length > 0" variant="text" icon :onclick="emitSendMessage">
           <v-icon>mdi-send</v-icon>
         </v-btn>
         <v-btn v-else variant="text" icon @click.stop="emitRetryMessage">
@@ -12,8 +12,8 @@
         </v-btn>
       </template>
     </v-textarea>
-    <div class="d-flex justify-space-between px-xl-16 my-2 font-weight-thin" style="font-size: .7em;">
-        <span>Model: tbd</span>
+    <div class="d-flex justify-space-between px-xl-16 my-2 " style="font-size: .7em;">
+        <span>Model: {{selectedChatModel}}</span>
       <div>
         <v-btn class="mr-2" variant="tonal" size="x-small" @click="emitSetChatIsFinished">
           <v-icon>mdi-cog</v-icon>Annotate chat
@@ -22,8 +22,6 @@
           <v-icon>mdi-cog</v-icon>Settings
         </v-btn>
       </div>
-
-
     </div>
   </div>
 </template>
@@ -35,7 +33,11 @@ export default {
     modelValue: {
       type: String,
       required: true
-    }
+    },
+    selectedChatModel: {
+      type: String,
+      required: true
+    },
   },
   emits: ['update:modelValue', 'send-message', 'retry-message', 'set-chat-is-finished', 'open-settings-modal'],
   data() {

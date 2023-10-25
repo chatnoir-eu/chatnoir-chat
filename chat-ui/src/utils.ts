@@ -62,7 +62,7 @@ const MOCK_CHAT_HISTORY = {'chatHistory': [{link: '/cc/1', title: 'Chat 1'}, {li
 
 const MOCK_CHAT_MODELS = {
   'chatModels': [{id: '0', title: 'Alpaca-7B', isRemovable: true}, {id: '1', title: 'GPT-2', isRemovable: true}],
-  'selectedChatModel': 'Alpaca-7B'
+  'selectedChatModel': '0'
 }
 
 const MOCK_CONVERSATION_ANNOTATION = {
@@ -116,7 +116,7 @@ const MOCK_CHAT = {
   messages: MOCK_CHAT_MESSAGES,
   userAvatar: "https://randomuser.me/api/portraits/men/78.jpg",
   loading: false,
-  selectedChatModel: 'Alpaca-7B',
+  selectedChatModel: '0',
   availableTopics: [' Web Track 2009', 'Obama family tree'],
   selectedTopic: "Obama family tree",
   chatIsFinished: false,
@@ -141,8 +141,11 @@ const API_CALLS: Record<string, ApiValue> = {
     }
   },
   '/new-chat-model': async (data: any) => {
-    return {'chatModel': {'id': Math.random(), title: data['title'], 'isRemovable': true}}
+    return {'id': Math.random().toString(), title: data['title'], 'isRemovable': true}
   },
+    '/remove-chat-model': async (data: any) => {
+    return {'id': data['id']}
+    }
 }
 
 
@@ -276,6 +279,7 @@ export async function get(url: string, obj: any): Promise<any> {
 
 export async function post(url: string, data: any, obj: any): Promise<any> {
   const response = await post_method(url, data);
+  console.log("post, url: " + url + ", data: " + data + ", response: " + response);
   inject_response(response, obj);
   return response
 }

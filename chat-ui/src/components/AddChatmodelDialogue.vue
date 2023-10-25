@@ -2,12 +2,14 @@
   <v-dialog v-model="dialogState">
     <v-card>
       <v-card-title>Add new Chatmodel</v-card-title>
-      <v-card-text v-if="loading"> <loading :loading="loading"/></v-card-text>
+      <v-card-text v-if="loading">
+        <loading :loading="loading"/>
+      </v-card-text>
       <v-card-text v-if="!loading">
         <v-container>
           <v-row>
             <v-col cols="12">
-              <v-text-field v-model="title" label="Name" required/>
+              <v-text-field :error-messages="titleErrorMessage" v-model="title" label="Name" required/>
               <v-text-field v-model="description" label="Description"/>
             </v-col>
           </v-row>
@@ -26,7 +28,7 @@
             <v-btn @click="copyToClipboard">Copy</v-btn>
           </v-card-title>
           <v-card-text class="language-python overflow-scroll">
-            <pre class="language-python pt-4" v-html="endpointPythonCode" />
+            <pre class="language-python pt-4" v-html="endpointPythonCode"/>
           </v-card-text>
         </v-card>
       </v-card-text>
@@ -51,7 +53,8 @@ export default {
     title: "",
     description: "",
     loading: true,
-    backend_id: ""
+    backend_id: "",
+    titleErrorMessage: ""
   }),
   computed: {
     dialogState: {
@@ -72,8 +75,8 @@ chatnoir = ChatNoirChatClient(`
 
       ret += `)
 chatnoir.serve_chat_backend('`
-      
-      return ret +  this.backend_id+ "', lambda i: 'You said: ' + i)"
+
+      return ret + this.backend_id + "', lambda i: 'You said: ' + i)"
     }
   },
   beforeMount() {
@@ -85,10 +88,15 @@ chatnoir.serve_chat_backend('`
       this.$emit('update:modelValue', false);
     },
     addChatModel() {
+      if (this.title === "") {
+        this.titleErrorMessage = "Please enter a title";
+        return;
+      }
       this.addNewChatModelFunction(this.title, this.description, this.backend_id);
       this.title = "";
       this.description = "";
       this.backend_id = "";
+      this.titleErrorMessage = "";
       this.closeDialogue();
     },
     copyToClipboard() {
@@ -102,8 +110,10 @@ chatnoir.serve_chat_backend('`
         this.title = "";
         this.description = "";
         this.backend_id = "";
-        post('/api/edit-custom-backend', {}, this)
-          .then(() => {this.loading=false})
+        post('/new-chat-model', {}, this)
+            .then(() => {
+              this.loading = false
+            })
       }
     }
   }
