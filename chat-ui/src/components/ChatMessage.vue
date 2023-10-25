@@ -1,5 +1,5 @@
 <template>
-  <v-col :class="'d-flex ' + (isChecked ? ' bg-red opacity-50' : '')" :cols="isSelectable ? '12' : '12'">
+  <v-col :class="'d-flex ' + (isChecked && isSelectable ? ' bg-red opacity-50' : '')" :cols="isSelectable ? '12' : '12'">
     <v-checkbox v-model="isChecked"  v-if="isSelectable"/>
     <v-card :class="(message.type === 'bot' ? 'me-2 rounded-b-shaped': 'ms-2 rounded-e-shaped') + ' w-100'">
       <v-toolbar v-if="message.type === 'bot'"

@@ -8,7 +8,7 @@ export interface Question {
 export type ConversationAnnotation = Question[];
 
 export interface UtteranceAnnotation {
-  utterance_id: string;
+  utterance_id: number;
   questions: Question[];
 }
 

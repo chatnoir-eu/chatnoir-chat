@@ -58,6 +58,7 @@
                     :currentAnnotationMessageId="currentAnnotationMessageId"
                     :annotationView="annotationView"
                     :conversationAnnotation="conversationAnnotation"
+                    :utteranceAnnotations="utteranceAnnotations"
                     @update:conversationAnnotation="updateConversationAnnotation"
                     @update:annotationView="annotationView = $event"
     />
@@ -87,7 +88,7 @@ import AssessmentArea from "@/components/AssessmentArea.vue";
 import HeaderToolbar from "@/components/HeaderToolbar.vue";
 import NavigationDrawer from "@/components/NavigationDrawer.vue";
 import {get, post, avatar_src} from "@/utils";
-import {ConversationAnnotation, Message} from '@/types';
+import {ConversationAnnotation, Message, UtteranceAnnotation} from '@/types';
 import ChatSettings from "@/components/ChatSettings.vue";
 
 
@@ -139,12 +140,12 @@ export default {
     availableTopics: [' Web Track 2009', 'Obama family tree'],
     selectedTopic: "Obama family tree",
     conversationAnnotation: null as ConversationAnnotation | null,
+    utteranceAnnotations: null as UtteranceAnnotation[] | null,
     chatId: extractChatIdFromUrl(),
     chatTitle: "",
     chatDescription: "",
     annotationView: "conversation",
     currentAnnotationMessageId: -1,
-    // utteranceAnnotations: null as UtteranceAnnotation[] | null,
   }),
   beforeMount() {
     if ('' + this.chatId === 'undefined' || '' + this.chatId === 'null' || '' + this.chatId === '') {

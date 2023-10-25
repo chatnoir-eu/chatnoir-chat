@@ -66,7 +66,7 @@
 
 
 <script lang="ts">
-import {ConversationAnnotation} from '@/types';
+import {ConversationAnnotation, UtteranceAnnotation} from '@/types';
 
 export default {
   props: {
@@ -78,13 +78,16 @@ export default {
       type: Object as () => ConversationAnnotation | null,
       required: true
     },
-    // utteranceAnnotations: {
-    //   type: Array as () => UtteranceAnnotation[] | null,
-    //   required: true
-    // }
+    utteranceAnnotations: {
+      type: Array as () => UtteranceAnnotation[] | null,
+      required: true
+    },
+    currentAnnotationMessageId: {
+      type: number,
+      required: true
+    }
   },
-  // emits: ['update:conversationAnnotation', 'update:utteranceAnnotations'],
-  emits: ['update:conversationAnnotation', 'update:annotationView'],
+  emits: ['update:conversationAnnotation', 'update:annotationView', 'update:utteranceAnnotations'],
 
   data() {
     return {
@@ -94,7 +97,14 @@ export default {
       // utteranceAnswers: [],
     };
   },
-
+  computed: {
+    currentUtteranceAnnotation() {
+      if (this.currentAnnotationMessageId === -1) {
+        return null;
+      }
+      return this.utteranceAnnotations ? this.utteranceAnnotations[this.currentAnnotationMessageId] : null;
+    }
+  },
   watch: {
     conversationAnnotation: {
       deep: true,
