@@ -34,7 +34,7 @@ docker run --rm -ti --entrypoint python3 registry.webis.de/code-lib/public-image
 
 Run it locally (Guanaco-7b) via:
 ```
-docker run --rm -ti --entrypoint python3 registry.webis.de/code-lib/public-images/chatnoir-chat-gpt2-xl:0.0.1 Guanaco/run_inference.py --input_model /workspace/llama/llama-7b --lora_adapter /workspace/llama/guanaco/
+docker run --rm -ti --entrypoint python3 registry.webis.de/code-lib/public-images/chatnoir-chat-gpt2-xl:0.0.1 Guanaco/run_inference.py --input_model /workspace/llama/llama-7b --lora_adapter timdettmers/guanaco-7b
 ```
 
 

@@ -60,7 +60,7 @@ def load_model(model_path, lora_adapter_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_model", type=str, required=True)
-    parser.add_argument("--lora_adapter", type=str, required=True)
+    parser.add_argument("--lora_adapter", type=str, required=True, default="timdettmers/guanaco-7b")
     arg = parser.parse_args()
     tokenizer, model = load_model(arg.input_model, arg.lora_adapter)
 
