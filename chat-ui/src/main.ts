@@ -14,31 +14,33 @@ import { createRouter,createWebHistory} from 'vue-router'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
+import LandingPage from "@/views/LandingPage.vue";
 
 export default function register_app() {
     const app_selector = '#app'
-  
+
     const app_elem = document.querySelector(app_selector)
     if (app_elem && '__vue_app__' in app_elem && app_elem.__vue_app__) {
       console.log('App is already mounted.')
       return;
     }
-  
+
     console.log('Mount vue app to location: ' + window.location)
 
     const routes = [
-      {path: '/', component: Chat},
+        {path: '/', component: LandingPage},
+      {path: '/c', component: Chat},
       {path: '/c/:chat_id', component: Chat},
-    
+
       // Fallback: everything matches to home.
       {path: '/:pathMatch(.*)*', component: Chat},
     ]
-    
+
     const router = createRouter({
       history: createWebHistory(),
       routes,
     })
-  
+
     const app = createApp(App)
     app.use(router)
 
