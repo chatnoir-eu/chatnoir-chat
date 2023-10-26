@@ -153,7 +153,6 @@ export default {
         return this.message.id === this.selectedMessageId;
       },
       set(newValue) {
-        console.log("set", newValue);
         const newSelectedId = newValue ? this.message.id : -1;
         this.$emit('update:currentAnnotationMessageId', newSelectedId);
       }
@@ -168,18 +167,10 @@ export default {
     }
   },
 
-
   methods: {
     updateCurrentAnnotationMessageId() {
       this.$emit('update:currentAnnotationMessageId', this.message.id);
     },
-    // handleCheckboxChange(checked) {
-    //   checked.target.value
-    //   console.log("handleCheckboxChange", checked.target);
-    //
-    //   const newSelectedId = checked ? -1 : this.message.id;
-    //   this.$emit('update:currentAnnotationMessageId', newSelectedId);
-    // }
   }
 }
 </script>

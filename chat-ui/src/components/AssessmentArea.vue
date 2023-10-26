@@ -1,22 +1,20 @@
 <template>
   <div class="fixed-input">
     <v-divider
-      thickness="4"
-      color="black"
+        thickness="4"
+        color="black"
     >
     </v-divider>
-
     <v-card>
       <h3 class="text-center">Assessment Area</h3>
       <v-tabs
-        v-model="localAnnotationView"
-        color="red"
-        align-tabs="center"
+          v-model="localAnnotationView"
+          color="red"
+          align-tabs="center"
       >
         <v-tab value="conversation">Conversation</v-tab>
         <v-tab value="utterance">Single Utterance</v-tab>
       </v-tabs>
-
       <v-card-text>
         <v-window v-model="localAnnotationView">
           <v-window-item class="text-center" value="conversation">
@@ -25,37 +23,63 @@
                 <div class="d-inline text-center" v-if="question.response_type === 'Yes/No'">
                   <h4>{{ question.question_text }}</h4>
                   <v-radio-group
-                    class="d-inline-block"
-                    v-model="conversationAnswers[index]"
-                    inline
+                      class="d-inline-block"
+                      v-model="conversationAnswers[index]"
+                      inline
                   >
                     <v-radio
-                      label="Yes"
-                      value="Yes"
+                        label="Yes"
+                        value="Yes"
                     ></v-radio>
                     <v-radio
-                      label="No"
-                      value="No"
+                        label="No"
+                        value="No"
                     ></v-radio>
                   </v-radio-group>
 
                 </div>
                 <v-divider
-                  v-if="index !== conversationAnnotation.length -1"
-                  thickness="2"
-                  color="black"
-                  :key="index"
-                  class="my-4"
+                    v-if="index !== conversationAnnotation.length -1"
+                    thickness="2"
+                    color="black"
+                    :key="index"
+                    class="my-4"
                 ></v-divider>
               </div>
-
-
             </div>
-
           </v-window-item>
-
           <v-window-item class="text-center" value="utterance">
-            Click on an utterance to start annotating it. [NOT WORKING YET]
+            <div v-if="selectedMessageId < 0">Please select an Utterance.</div>
+            <div v-if="selectedUtteranceAnnotation === null && selectedMessageId >= 0">No questions available. Contact Admin.</div>
+            <div v-if="selectedUtteranceAnnotation">
+              <div v-for="(question, index) in selectedUtteranceAnnotation.questions"
+                   :key="question.question_id">
+                <div class="d-inline text-center" v-if="question.response_type === 'Yes/No'">
+                  <h4>{{ question.question_text }}</h4>
+                  <v-radio-group
+                      class="d-inline-block"
+                      v-model="selectedUtteranceAnswers[index]"
+                      inline
+                  >
+                    <v-radio
+                        label="Yes"
+                        value="Yes"
+                    ></v-radio>
+                    <v-radio
+                        label="No"
+                        value="No"
+                    ></v-radio>
+                  </v-radio-group>
+                </div>
+                <v-divider
+                    v-if="index !== selectedUtteranceAnnotation.questions.length - 1"
+                    thickness="2"
+                    color="black"
+                    :key="index"
+                    class="my-4"
+                ></v-divider>
+              </div>
+            </div>
           </v-window-item>
         </v-window>
       </v-card-text>
@@ -82,8 +106,8 @@ export default {
       type: Array as () => UtteranceAnnotation[] | null,
       required: true
     },
-    currentAnnotationMessageId: {
-      type: number,
+    selectedMessageId: {
+      type: Number,
       required: true
     }
   },
@@ -94,33 +118,37 @@ export default {
       localInput: this.modelValue,
       localAnnotationView: this.annotationView,
       conversationAnswers: [] as (string | null)[],
-      // utteranceAnswers: [],
+      selectedUtteranceAnswers: [] as (string | null)[],
     };
   },
   computed: {
-    currentUtteranceAnnotation() {
-      if (this.currentAnnotationMessageId === -1) {
+    selectedUtteranceAnnotation() {
+      if (this.selectedMessageId === -1 || this.utteranceAnnotations === null) {
         return null;
       }
-      return this.utteranceAnnotations ? this.utteranceAnnotations[this.currentAnnotationMessageId] : null;
+
+      const selectedUtteranceQuestions = this.utteranceAnnotations.find(ua => ua.utterance_id === this.selectedMessageId);
+
+      return selectedUtteranceQuestions || null;
     }
   },
   watch: {
+    selectedMessageId(newId, oldId) {
+      if (newId !== oldId && this.utteranceAnnotations !== null) {
+        const selectedUtterance = this.utteranceAnnotations.find(UA => UA.utterance_id === newId);
+        if (selectedUtterance) {
+          this.selectedUtteranceAnswers = selectedUtterance.questions.map(q => q.answer || null);
+        }
+      }
+    },
+    localAnnotationView(newValue) {
+      this.$emit('update:annotationView', newValue);
+    },
     conversationAnnotation: {
       deep: true,
       handler() {
         this.$emit('update:conversationAnnotation', this.conversationAnnotation);
       }
-    },
-    // utteranceAnnotations: {
-    //   deep: true,
-    //   handler() {
-    //     this.$emit('update:utteranceAnnotations', this.utteranceAnnotations);
-    //   }
-    // },
-
-    localAnnotationView(newValue) {
-      this.$emit('update:annotationView', newValue);
     },
     conversationAnswers: {
       deep: true,
@@ -130,20 +158,44 @@ export default {
           return;
         }
         const updatedAnnotation = this.conversationAnnotation.map((q, index) => ({
-            ...q,
-            answer: this.conversationAnswers[index]
+          ...q,
+          answer: this.conversationAnswers[index]
         }));
         this.$emit('update:conversationAnnotation', updatedAnnotation);
       }
     },
+    selectedUtteranceAnswers: {
+      deep: true,
+      handler() {
+        if (!this.selectedUtteranceAnnotation) {
+          return;
+        }
+        const updatedAnnotation = {
+          ...this.selectedUtteranceAnnotation,
+          questions: this.selectedUtteranceAnnotation.questions.map((q, index) => ({
+            ...q,
+            answer: this.selectedUtteranceAnswers[index]
+          }))
+        };
+        const updatedUtteranceAnnotations = this.utteranceAnnotations?.map(ua => ua.utterance_id === updatedAnnotation.utterance_id ? updatedAnnotation : ua);
+
+        this.$emit('update:utteranceAnnotations', updatedUtteranceAnnotations);
+      }
+    },
+
+
   },
   mounted() {
     if (this.conversationAnnotation !== null) {
-      console.log(this.conversationAnnotation);
-      console.log("mounted");
       this.conversationAnswers = this.conversationAnnotation.map(q => q.answer || null);
     }
     // Similar initialization for utteranceAnnotations
+    if (this.utteranceAnnotations !== null) {
+       const selectedUtterance = this.utteranceAnnotations.find(UA => UA.utterance_id === this.selectedMessageId);
+        if (selectedUtterance) {
+          this.selectedUtteranceAnswers = selectedUtterance.questions.map(q => q.answer || null);
+        }
+    }
   },
 
   methods: {},
@@ -153,7 +205,7 @@ export default {
 .fixed-input {
 
   width: 100%;
-  z-index:0; /* Make sure it's above the chat messages */
+  z-index: 0; /* Make sure it's above the chat messages */
   padding: 0 16px; /* Some padding, adjust as needed */
   background-color: white; /* Background color to cover messages underneath */
 }

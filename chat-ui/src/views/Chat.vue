@@ -30,36 +30,38 @@
 
       <v-row class="px-xl-16" v-for="message in messages" :key="message.id">
         <ChatMessage
+            chat-noir-avatar="/assets/img/chatnoir-chat-avatar.svg"
             :isSelectable="annotationView === 'utterance'"
             :selectedMessageId="currentAnnotationMessageId"
             :message="message"
-            chat-noir-avatar="/assets/img/chatnoir-chat-avatar.svg"
             :user-avatar="user.userAvatar"
             @update:currentAnnotationMessageId="updateCurrentAnnotationMessageId"
         />
       </v-row>
     </v-container>
     <AddChatmodelDialogue v-model="addChatModelModalIsOpen" :addNewChatModelFunction="addNewChatModel"/>
-    <ChatSettings :chatTitle="chatTitle"
-                  :chatDescription="chatDescription"
-                  :chatModels="chatModels"
-                  :selectedChatModel="selectedChatModel"
-                  :chatIsFinished="chatIsFinished"
-                  v-model="chatSettingsModalIsOpen"
-                  @updateChatTitle="chatTitle = $event"
-                  @updateChatDescription="chatDescription = $event"
-                  @updateSelectedChatModel="selectedChatModel = $event"
-                  @removeChatModel="removeChatModel"
-                  @openAddChatModelDialogue="addChatModelModalIsOpen = true"
+    <ChatSettings
+        v-model="chatSettingsModalIsOpen"
+        :chatTitle="chatTitle"
+        :chatDescription="chatDescription"
+        :chatModels="chatModels"
+        :selectedChatModel="selectedChatModel"
+        :chatIsFinished="chatIsFinished"
+        @updateChatTitle="chatTitle = $event"
+        @updateChatDescription="chatDescription = $event"
+        @updateSelectedChatModel="selectedChatModel = $event"
+        @removeChatModel="removeChatModel"
+        @openAddChatModelDialogue="addChatModelModalIsOpen = true"
     />
 
 
     <AssessmentArea v-if="chatIsFinished"
-                    :currentAnnotationMessageId="currentAnnotationMessageId"
+                    :selectedMessageId="currentAnnotationMessageId"
                     :annotationView="annotationView"
                     :conversationAnnotation="conversationAnnotation"
                     :utteranceAnnotations="utteranceAnnotations"
                     @update:conversationAnnotation="updateConversationAnnotation"
+                    @update:utteranceAnnotations="updateUtteranceAnnotations"
                     @update:annotationView="annotationView = $event"
     />
 
@@ -191,12 +193,8 @@ export default {
       });
     },
     addNewChatModel(title: string, description: string, backend_id: string) {
-      console.log("add new chat model: ", title, description);
-
       post('/new-chat-model', {'title': title, 'description': description, 'backend_id': backend_id}, this)
           .then((newModel) => {
-            console.log("new model: ", newModel)
-
             this.chatModels.push(newModel);
             this.selectedChatModel = newModel.id;
           });
@@ -210,8 +208,6 @@ export default {
 
     removeChatModel(chatModelId: string, chatModelTitle: string) {
       this.chatModels = this.chatModels.filter((chatModel) => chatModel.id !== chatModelId)
-      console.log("remove chat model: ", chatModelId);
-      console.log("selectedChatModel: ", this.selectedChatModel);
       if (this.selectedChatModel === chatModelId) {
         this.selectedChatModel = "";
       }
@@ -219,12 +215,14 @@ export default {
     },
     updateConversationAnnotation(updatedAnnotation: ConversationAnnotation) {
       this.conversationAnnotation = updatedAnnotation;
-      console.log("Updated conversationAnnotation:", this.conversationAnnotation);
       post('/annotate-chat/' + this.chatId, this.conversationAnnotation, this);
     },
     updateCurrentAnnotationMessageId(messageId: number) {
-      console.log("updateCurrentAnnotationMessageId: ", messageId)
       this.currentAnnotationMessageId = messageId;
+    },
+    updateUtteranceAnnotations(updatedAnnotations: UtteranceAnnotation[]) {
+      this.utteranceAnnotations = updatedAnnotations;
+      post('/annotate-chat/' + this.chatId + '/utterances', this.utteranceAnnotations, this);
     },
 
   },

@@ -1,6 +1,6 @@
 // types
 
-import {UtteranceAnnotation} from "@/types";
+import {ConversationAnnotation, UtteranceAnnotation} from "@/types";
 
 type ChatHistory = {
 	chatHistory: { link: string; title: string }[];
@@ -9,15 +9,6 @@ type ChatHistory = {
 type ChatModels = {
 	chatModels: { id: string; title: string; isRemovable: boolean }[];
 	selectedChatModel: string;
-};
-
-type ConversationAnnotation = {
-	conversationAnnotation: {
-		question_id: string;
-		question_text: string;
-		response_type: string;
-		answer: string | null;
-	}[];
 };
 
 type EndpointPythonCode = {
@@ -41,12 +32,8 @@ type Chat = {
 	selectedTopic: string;
 	chatIsFinished: boolean;
 	chatModels: { id: string; title: string; isRemovable: boolean }[];
-	conversationAnnotation: {
-		question_id: string;
-		question_text: string;
-		response_type: string;
-		answer: string | null;
-	}[];
+	conversationAnnotation: ConversationAnnotation;
+	utteranceAnnotations: UtteranceAnnotation[];
 };
 
 
@@ -68,24 +55,22 @@ const MOCK_CHAT_MODELS = {
 	'selectedChatModel': '0'
 }
 
-const MOCK_CONVERSATION_ANNOTATION = {
-	'conversationAnnotation': [
-		{
-			question_id: '0',
-			question_text: 'Did the model answer your question based on facts?',
-			response_type: 'Yes/No',
-			answer: null
-		},
-		{
-			question_id: '1',
-			question_text: 'Does the model remember the context of the conversation?',
-			response_type: 'Yes/No',
-			answer: null
-		},
-	]
-};
+const MOCK_CONVERSATION_ANNOTATION: ConversationAnnotation = [
+	{
+		question_id: '0',
+		question_text: 'Did the model answer your question based on facts?',
+		response_type: 'Yes/No',
+		answer: null
+	},
+	{
+		question_id: '1',
+		question_text: 'Does the model remember the context of the conversation?',
+		response_type: 'Yes/No',
+		answer: null
+	},
+];
 
-const MOCK_UTTERANCE_ANNOTATIONS:  UtteranceAnnotation[] = [
+const MOCK_UTTERANCE_ANNOTATIONS: UtteranceAnnotation[] = [
 	{
 		"utterance_id": 0,
 		"questions": [
@@ -162,7 +147,9 @@ const MOCK_CHAT = {
 	selectedTopic: "Obama family tree",
 	chatIsFinished: false,
 	chatModels: MOCK_CHAT_MODELS.chatModels,
-	conversationAnnotation: MOCK_CONVERSATION_ANNOTATION.conversationAnnotation,
+	conversationAnnotation: MOCK_CONVERSATION_ANNOTATION,
+	utteranceAnnotations: MOCK_UTTERANCE_ANNOTATIONS,
+	chatId: 'adfejkalej324'
 }
 
 
