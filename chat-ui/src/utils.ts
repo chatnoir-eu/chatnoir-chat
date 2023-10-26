@@ -157,6 +157,7 @@ const API_CALLS: Record<string, ApiValue> = {
 	'/load-chat-history': MOCK_CHAT_HISTORY,
 	'/load-chat-models': MOCK_CHAT_MODELS,
 	'/load-chat/': MOCK_CHAT,
+	'/load-chat/new-chat-id': MOCK_CHAT, // this is the enpoint to create a new chat
 	'/load-add-endpoint-code': MOCK_ENDPOINT_PYTHON_CODE,
 	'/load-conversation-annotation': MOCK_CONVERSATION_ANNOTATION,
 	'/load_utterance-annotations': MOCK_UTTERANCE_ANNOTATIONS,
