@@ -12,7 +12,7 @@
       </p>
       <v-row class="d-flex justify-center py-4">
         <v-col cols="auto">
-          <v-btn color="error" href="/cc" min-width="228" rel="noopener noreferrer" size="x-large" variant="flat">
+          <v-btn color="error" href="/cc/new-chat" min-width="228" rel="noopener noreferrer" size="x-large" variant="flat">
             <v-icon icon="mdi-chat-outline" size="large" start/>
             Start Chat
           </v-btn>
