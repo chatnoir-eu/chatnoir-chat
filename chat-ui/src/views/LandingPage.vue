@@ -14,7 +14,7 @@
         <v-col cols="auto">
           <v-btn color="error" href="/c" min-width="228" rel="noopener noreferrer" size="x-large" variant="flat">
             <v-icon icon="mdi-chat-outline" size="large" start/>
-            Get Started
+            Start Chat
           </v-btn>
         </v-col>
         <!--        <v-col cols="auto text-primary">-->
