@@ -29,11 +29,11 @@ export default function register_app() {
 
     const routes = [
         {path: '/', component: LandingPage},
-      {path: '/c', component: Chat},
-      {path: '/c/:chat_id', component: Chat},
+      {path: '/cc', component: Chat},
+      {path: '/cc/:chat_id', component: Chat},
 
       // Fallback: everything matches to home.
-      {path: '/:pathMatch(.*)*', component: Chat},
+      {path: '/:pathMatch(.*)*', component: LandingPage},
     ]
 
     const router = createRouter({
