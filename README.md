@@ -23,7 +23,7 @@ For python, we provide a client library so that you can chat with the cat:
 ```
 from chatnoir_api.chat import ChatNoirChatClient
 
-chat_client = ChatNoirChatClient(api_key="<API_KEY>")
+chat_client = ChatNoirChatClient()
 response = chat_client.chat("how are you?")
 ```
 
