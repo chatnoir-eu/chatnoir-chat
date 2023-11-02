@@ -16,7 +16,7 @@ ChatCat has a focus on research-oriented laboratory experiments, so you can dyna
 
 ### API Support
 
-You can access the LLMs in ChatCat via an [API](https://github.com/chatnoir-eu/chatnoir-api).
+You can access the LLMs in ChatCat via an [API](https://github.com/chatnoir-eu/chatnoir-api) (please install it via `pip install chatnoir-api`).
 The models `alpaca-en-7b` and `gpt2-xl` are public and do not require an API-Key, for other models (including [custom backends](custom-backends)), you need an API key for authentication (please request one from the [admins](mailto:maik.froebe@uni-jena.de)).
 
 For python, we provide a client library so that you can chat with the cat:
