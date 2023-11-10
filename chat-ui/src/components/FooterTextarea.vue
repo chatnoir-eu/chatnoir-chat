@@ -15,11 +15,14 @@
     <div class="d-flex justify-space-between px-xl-16 my-2 " style="font-size: .7em;">
         <span>Model: {{selectedChatModel}}</span>
       <div>
-        <v-btn class="mr-2" variant="tonal" size="x-small" @click="emitSetChatIsFinished">
-          <v-icon>mdi-cog</v-icon>Annotate chat
+        <v-btn class="my-2" variant="tonal" size="x-small" @click="emitSetChatIsFinished">
+          <v-icon>mdi-cog</v-icon>Annotate
         </v-btn>
-        <v-btn  variant="tonal" size="x-small" @click="emitOpenSettingsModal">
+        <v-btn class="my-2" variant="tonal" size="x-small" @click="emitOpenSettingsModal">
           <v-icon>mdi-cog</v-icon>Settings
+        </v-btn>
+        <v-btn class="my-2" variant="tonal" size="x-small" @click="emitToggleDrawer">
+          <v-icon>mdi-history</v-icon>History
         </v-btn>
       </div>
     </div>
@@ -69,7 +72,10 @@ export default {
     },
     emitOpenSettingsModal() {
       this.$emit('open-settings-modal');
-    }
+    },
+    emitToggleDrawer() {
+      this.$emit('toggle-drawer');
+    },
   }
 }
 </script>

@@ -5,8 +5,6 @@
     <NavigationDrawer v-model="drawerIsOpen"/>
     <loading :loading="loading"/>
     <v-container v-if="!loading" class="main-container w-full pt-0">
-      <HeaderToolbar chat-noir-icon="@/assets/img/chanoir-icon.svg"
-                     @toggleDrawer="drawerIsOpen = !drawerIsOpen"/>
       <v-row class="pt-2 px-xl-16 d-block text-center">
         <div class="d-flex justify-space-between" v-if="messages.length > 0">
           <v-chip v-if="chatIsFinished" class="ma-2" color="success" variant="outlined" size="large">
@@ -73,8 +71,7 @@
         @retry-message="retryMessage"
         @set-chat-is-finished="setChatisFinished"
         @open-settings-modal="openSettingsModal"
-
-
+	@toggle-drawer="drawerIsOpen = !drawerIsOpen"
     />
   </v-app>
 </template>
@@ -231,13 +228,16 @@ export default {
 
 
 <style scoped>
+#app main{
+  overflow-y: hidden;
+}
+  
 .app-container {
   height: calc(100vh - 200px);
 }
 
 .main-container {
-  flex-grow: 1; /* take all available space */
-  overflow-y: auto; /* scroll when content is too much */
+  flex-grow: .9; /* take all available space */
 
   max-width: 100% !important;
   z-index: 0;

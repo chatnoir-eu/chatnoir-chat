@@ -211,7 +211,7 @@ export function avatar_src(): { userAvatar: string; userName: string } {
 		// @ts-ignore
 		return {'userAvatar': elem.src, 'userName': elem.title}
 	} catch (exception) {
-		return {'userAvatar': 'https://webis.de/weimar/people/img/silhouette-female.jpg', 'userName': 'Unregistered User'}
+		return {'userAvatar': '@/assets/img/chatnoir-chat-user.svg', 'userName': 'Unregistered User'}
 	}
 }
 
