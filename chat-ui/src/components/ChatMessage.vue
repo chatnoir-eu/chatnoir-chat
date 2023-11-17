@@ -1,6 +1,7 @@
 <template>
-  <v-col :class="'d-flex ' + (isChecked && isSelectable ? ' bg-red opacity-50' : '')" :cols="isSelectable ? '12' : '12'">
-    <v-checkbox v-model="isChecked"  v-if="isSelectable"/>
+  <v-col :class="'d-flex ' + (isChecked && isSelectable ? ' bg-red opacity-50' : '')"
+         :cols="isSelectable ? '12' : '12'">
+    <v-checkbox v-model="isChecked" v-if="isSelectable"/>
     <v-card :class="(message.type === 'bot' ? 'me-2 rounded-b-shaped': 'ms-2 rounded-e-shaped') + ' w-100'">
       <v-toolbar v-if="message.type === 'bot'"
                  density="compact"
@@ -9,35 +10,35 @@
         <template #prepend>
           <template v-if="message.type === 'bot'">
             <v-avatar
-                class="mr-2"
-                color="white"
-                image="../assets/img/chatnoir-chat-avatar.svg"></v-avatar>
+              class="mr-2"
+              color="white"
+              image="../assets/img/chatnoir-chat-avatar.svg"></v-avatar>
             ChatCat
           </template>
 
         </template>
-        <template #append>
-          <v-menu>
-            <template #activator="{ props }">
-              <v-btn
-                  v-bind="props"
-                  icon="mdi-dots-vertical"
-              >
-              </v-btn>
+        <!--        <template #append>-->
+        <!--          <v-menu>-->
+        <!--            <template #activator="{ props }">-->
+        <!--              <v-btn-->
+        <!--                  v-bind="props"-->
+        <!--                  icon="mdi-dots-vertical"-->
+        <!--              >-->
+        <!--              </v-btn>-->
 
-            </template>
-            <v-list>
-              <v-list density="compact">
-                <v-list-item @click="() => showExplanationIndices.push(message.id)">
-                  <v-list-item-title>Explanation</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="() => showReferencesIndices.push(message.id)">
-                  <v-list-item-title>References</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-list>
-          </v-menu>
-        </template>
+        <!--            </template>-->
+        <!--            <v-list>-->
+        <!--              <v-list density="compact">-->
+        <!--                <v-list-item @click="() => showExplanationIndices.push(message.id)">-->
+        <!--                  <v-list-item-title>Explanation</v-list-item-title>-->
+        <!--                </v-list-item>-->
+        <!--                <v-list-item @click="() => showReferencesIndices.push(message.id)">-->
+        <!--                  <v-list-item-title>References</v-list-item-title>-->
+        <!--                </v-list-item>-->
+        <!--              </v-list>-->
+        <!--            </v-list>-->
+        <!--          </v-menu>-->
+        <!--        </template>-->
       </v-toolbar>
 
       <v-toolbar v-if="message.type === 'user'"
@@ -54,17 +55,17 @@
         <v-card-subtitle
         >
           <v-alert
-              v-show="showExplanationIndices.includes(message.id)"
-              border="start"
-              border-color="bg-red-lighten-4"
-              elevation="1"
+            v-show="showExplanationIndices.includes(message.id)"
+            border="start"
+            border-color="bg-red-lighten-4"
+            elevation="1"
           >
             <v-btn
-                small
-                icon
-                variant="text"
-                class="float-right"
-                @click="(e)=> showExplanationIndices.splice(showExplanationIndices.indexOf(message.id), 1)"
+              small
+              icon
+              variant="text"
+              class="float-right"
+              @click="(e)=> showExplanationIndices.splice(showExplanationIndices.indexOf(message.id), 1)"
             >
               <v-icon size="x-small">mdi-close</v-icon>
             </v-btn>
@@ -81,18 +82,18 @@
         <v-card-subtitle
         >
           <v-alert
-              v-show="showReferencesIndices.includes(message.id)"
+            v-show="showReferencesIndices.includes(message.id)"
 
-              border="start"
-              border-color="bg-red-lighten-3"
-              elevation="2"
+            border="start"
+            border-color="bg-red-lighten-3"
+            elevation="2"
           >
             <v-btn
-                small
-                icon
-                variant="text"
-                class="float-right"
-                @click="(e)=> showReferencesIndices.splice(showReferencesIndices.indexOf(message.id), 1)"
+              small
+              icon
+              variant="text"
+              class="float-right"
+              @click="(e)=> showReferencesIndices.splice(showReferencesIndices.indexOf(message.id), 1)"
             >
               <v-icon size="x-small">mdi-close</v-icon>
             </v-btn>

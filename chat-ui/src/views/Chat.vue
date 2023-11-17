@@ -28,28 +28,56 @@
 
       <v-row class="px-xl-16" v-for="message in messages" :key="message.id">
         <ChatMessage
-            chat-noir-avatar="/assets/img/chatnoir-chat-avatar.svg"
-            :isSelectable="annotationView === 'utterance'"
-            :selectedMessageId="currentAnnotationMessageId"
-            :message="message"
-            :user-avatar="user.userAvatar"
-            @update:currentAnnotationMessageId="updateCurrentAnnotationMessageId"
+          chat-noir-avatar="../assets/img/chatnoir-chat-avatar.svg"
+          :isSelectable="annotationView === 'utterance'"
+          :selectedMessageId="currentAnnotationMessageId"
+          :message="message"
+          :user-avatar="user.userAvatar"
+          @update:currentAnnotationMessageId="updateCurrentAnnotationMessageId"
         />
+      </v-row>
+      <v-row class="px-xl-16" v-if="messageIsLoading">
+        <v-col class="d-flex">
+          <v-card class="me-2 rounded-b-shaped w-100">
+            <v-toolbar
+              density="compact"
+              color="white"
+            >
+
+              <template #prepend>
+                <template>
+                  <v-avatar
+                    class="mr-2"
+                    color="white"
+                    image="../assets/img/chatnoir-chat-avatar.svg"></v-avatar>
+                  ChatCat
+                </template>
+              </template>
+
+            </v-toolbar>
+            <v-list-item>
+              <v-card-text>
+                <loading :loading="messageIsLoading"/>
+                Retrieving message...
+              </v-card-text>
+            </v-list-item>
+          </v-card>
+        </v-col>
       </v-row>
     </v-container>
     <AddChatmodelDialogue v-model="addChatModelModalIsOpen" :addNewChatModelFunction="addNewChatModel"/>
     <ChatSettings
-        v-model="chatSettingsModalIsOpen"
-        :chatTitle="chatTitle"
-        :chatDescription="chatDescription"
-        :chatModels="chatModels"
-        :selectedChatModel="selectedChatModel"
-        :chatIsFinished="chatIsFinished"
-        @updateChatTitle="chatTitle = $event"
-        @updateChatDescription="chatDescription = $event"
-        @updateSelectedChatModel="selectedChatModel = $event"
-        @removeChatModel="removeChatModel"
-        @openAddChatModelDialogue="addChatModelModalIsOpen = true"
+      v-model="chatSettingsModalIsOpen"
+      :chatTitle="chatTitle"
+      :chatDescription="chatDescription"
+      :chatModels="chatModels"
+      :selectedChatModel="selectedChatModel"
+      :chatIsFinished="chatIsFinished"
+      @updateChatTitle="chatTitle = $event"
+      @updateChatDescription="chatDescription = $event"
+      @updateSelectedChatModel="selectedChatModel = $event"
+      @removeChatModel="removeChatModel"
+      @openAddChatModelDialogue="addChatModelModalIsOpen = true"
     />
 
 
@@ -64,14 +92,14 @@
     />
 
     <FooterTextarea
-        v-model="currentUserMessage"
-        v-if="(!loading && !chatIsFinished)"
-        :selectedChatModel="selectedChatModelTitle"
-        @send-message="sendMessage"
-        @retry-message="retryMessage"
-        @set-chat-is-finished="setChatisFinished"
-        @open-settings-modal="openSettingsModal"
-	@toggle-drawer="drawerIsOpen = !drawerIsOpen"
+      v-model="currentUserMessage"
+      v-if="(!loading && !chatIsFinished)"
+      :selectedChatModel="selectedChatModelTitle"
+      @send-message="sendMessage"
+      @retry-message="retryMessage"
+      @set-chat-is-finished="setChatisFinished"
+      @open-settings-modal="openSettingsModal"
+      @toggle-drawer="drawerIsOpen = !drawerIsOpen"
     />
   </v-app>
 </template>
@@ -84,7 +112,6 @@ import ChatMessage from "@/components/ChatMessage.vue";
 import FooterTextarea from "@/components/FooterTextarea.vue";
 import AddChatmodelDialogue from "@/components/AddChatmodelDialogue.vue";
 import AssessmentArea from "@/components/AssessmentArea.vue";
-import HeaderToolbar from "@/components/HeaderToolbar.vue";
 import NavigationDrawer from "@/components/NavigationDrawer.vue";
 import {get, post, avatar_src} from "@/utils";
 import {ConversationAnnotation, Message, UtteranceAnnotation} from '@/types';
@@ -104,7 +131,6 @@ function extractChatIdFromUrl() {
 export default {
   components: {
     ChatSettings,
-    HeaderToolbar,
     NavigationDrawer,
     AssessmentArea,
     AddChatmodelDialogue,
@@ -145,18 +171,19 @@ export default {
     chatDescription: "",
     annotationView: "conversation",
     currentAnnotationMessageId: -1,
+    messageIsLoading: false,
   }),
   beforeMount() {
     if ('' + this.chatId === 'undefined' || '' + this.chatId === 'null' || '' + this.chatId === '') {
       get('/load-chat-models', this)
-          .then(() => {
-            get('/load-chat/new-chat-id', this).then(this.updateUrl)
-          });
+        .then(() => {
+          get('/load-chat/new-chat-id', this).then(this.updateUrl)
+        });
     } else {
       get('/load-chat-models', this)
-          .then(() => {
-            get('/load-chat/' + this.chatId, this).then(this.updateUrl)
-          });
+        .then(() => {
+          get('/load-chat/' + this.chatId, this).then(this.updateUrl)
+        });
     }
   },
   methods: {
@@ -179,22 +206,25 @@ export default {
         id: this.messages.length, chat_id: this.chatId,
         text: this.currentUserMessage, type: "user", topic: this.selectedTopic,
       }
+      this.messages.push(message);
+      this.messageIsLoading = true;
 
       post('/send-message/' + this.chatId, {
         'message': this.currentUserMessage,
         'endpoint': this.selectedChatModel
       }, this).then((m) => {
-        this.messages.push(message);
+
         this.currentUserMessage = "";
         this.messages.push(m);
+        this.messageIsLoading = false;
       });
     },
     addNewChatModel(title: string, description: string, backend_id: string) {
       post('/new-chat-model', {'title': title, 'description': description, 'backend_id': backend_id}, this)
-          .then((newModel) => {
-            this.chatModels.push(newModel);
-            this.selectedChatModel = newModel.id;
-          });
+        .then((newModel) => {
+          this.chatModels.push(newModel);
+          this.selectedChatModel = newModel.id;
+        });
     },
     retryMessage() {
       //
@@ -228,10 +258,10 @@ export default {
 
 
 <style scoped>
-#app main{
+#app main {
   overflow-y: hidden;
 }
-  
+
 .app-container {
   height: calc(100vh - 200px);
 }
