@@ -21,3 +21,4 @@ websocket-client
 websockets
 ws4py
 pyyaml
+ir_datasets

@@ -1,3 +1,5 @@
+# docker build -t webis/chatnoir-chat:0.0.2-dev -f chat-backend/docker/Dockerfile.dev .
+
 FROM ubuntu:22.04
 
 RUN apt-get update \
@@ -18,4 +20,28 @@ RUN mkdir /var/run/app-uwsgi \
 	&& rm /requirements.txt \
 	&& rm -Rf /root/.cache/pip \
 	&& rm /etc/nginx/sites-enabled/default
+
+
+RUN apt-get install -y wget curl
+
+RUN wget 'https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz' \
+    && tar -xf node-v20.10.0-linux-x64.tar.xz \
+    && rm node-v20.10.0-linux-x64.tar.xz \
+    && mv node-v20.10.0-linux-x64/bin/* /usr/local/bin/ \
+    && mv node-v20.10.0-linux-x64/lib/node_modules/ /usr/local/lib/ \
+    && npm install --global yarn
+
+ADD chat-ui/src/package.json chat-ui/src/yarn.lock chat-ui/src/vite.config.ts chat-ui/src/jest.config.js chat-ui/src/babel.config.js /tmp-del/
+
+RUN cd /tmp-del \
+    && yarn create vuetify \
+    && yarn install \
+    && yarn install --dev \
+    && mv node_modules/* /usr/local/lib/node_modules \
+    && mv node_modules/.bin /usr/local/lib/node_modules/.bin \
+    && mv node_modules/.yarn-integrity /usr/local/lib/node_modules/.yarn-integrity \
+    && cd / \
+    && rm -R /tmp-del/ \
+    && apt-get install -y vim htop bash-completion \
+    && echo "\n. /usr/share/bash-completion/bash_completion" >> ~/.bashrc
 
