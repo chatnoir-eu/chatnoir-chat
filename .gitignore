@@ -5,3 +5,4 @@ __pycache__/
 chat-backend/chatnoir_chat/migrations/__pycache__
 chat-backend/chatnoir_chat/db.sqlite3
 chat-backend/chatnoir_chat/static/ui/
+.vite
