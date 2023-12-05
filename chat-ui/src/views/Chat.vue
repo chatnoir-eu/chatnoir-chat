@@ -7,16 +7,16 @@
     <v-container v-if="!loading" class="main-container w-full pt-0">
       <v-row class="pt-2 px-xl-16 d-block text-center">
         <div class="d-flex justify-space-between" v-if="messages.length > 0">
-          <v-chip v-if="chatIsFinished" class="ma-2" color="success" variant="outlined" size="large">
+          <v-chip v-if="chat_is_finished" class="ma-2" color="success" variant="outlined" size="large">
             <v-icon start icon="mdi-text"></v-icon>
             Topic: {{ selectedTopic }}
           </v-chip>
         </div>
 
-        <v-select v-if="messages.length == 0 && chatIsFinished" label="Select your Topic"
+        <v-select v-if="messages.length == 0 && chat_is_finished" label="Select your Topic"
                   v-model="selectedTopic"
                   :items="availableTopics"
-                  :v-if="chatIsFinished"
+                  :v-if="chat_is_finished"
                   item-title="title">
           <template v-slot:item="{ props}">
             <v-list-item v-bind="props">
@@ -68,20 +68,21 @@
     <AddChatmodelDialogue v-model="addChatModelModalIsOpen" :addNewChatModelFunction="addNewChatModel"/>
     <ChatSettings
       v-model="chatSettingsModalIsOpen"
-      :chatTitle="chatTitle"
-      :chatDescription="chatDescription"
+      :chatTitle="chat_title"
+      :chatDescription="chat_description"
       :chatModels="chatModels"
       :selectedChatModel="selectedChatModel"
-      :chatIsFinished="chatIsFinished"
-      @updateChatTitle="chatTitle = $event"
-      @updateChatDescription="chatDescription = $event"
+      :chatIsFinished="chat_is_finished"
+      :chatId="chat_id"
+      @updateChatTitle="chat_title = $event"
+      @updateChatDescription="chat_description = $event"
       @updateSelectedChatModel="selectedChatModel = $event"
       @removeChatModel="removeChatModel"
       @openAddChatModelDialogue="addChatModelModalIsOpen = true"
     />
 
 
-    <AssessmentArea v-if="chatIsFinished"
+    <AssessmentArea v-if="chat_is_finished"
                     :selectedMessageId="currentAnnotationMessageId"
                     :annotationView="annotationView"
                     :conversationAnnotation="conversationAnnotation"
@@ -93,7 +94,7 @@
 
     <FooterTextarea
       v-model="currentUserMessage"
-      v-if="(!loading && !chatIsFinished)"
+      v-if="(!loading && !chat_is_finished)"
       :selectedChatModel="selectedChatModelTitle"
       @send-message="sendMessage"
       @retry-message="retryMessage"
@@ -159,14 +160,14 @@ export default {
     selectedChatModel: "",
     chatModels: [{id: '0', title: 'loading....', isRemovable: true}],
     currentUserMessage: "",
-    chatIsFinished: false,
+    chat_is_finished: false,
     availableTopics: [' Web Track 2009', 'Obama family tree'],
     selectedTopic: "Obama family tree",
     conversationAnnotation: null as ConversationAnnotation | null,
     utteranceAnnotations: null as UtteranceAnnotation[] | null,
     chat_id: extractChatIdFromUrl(),
-    chatTitle: "",
-    chatDescription: "",
+    chat_title: "",
+    chat_description: "",
     annotationView: "conversation",
     currentAnnotationMessageId: -1,
     messageIsLoading: false,
@@ -186,8 +187,8 @@ export default {
   },
   methods: {
     setChatisFinished() {
-      post('/finish-chat/' + this.chat_id, {}, this).then(() => {
-        this.chatIsFinished = true
+      post('/configure-chat/' + this.chat_id, {'is_finished': true}, this).then(() => {
+        this.chat_is_finished = true
       });
     },
     updateUrl() {

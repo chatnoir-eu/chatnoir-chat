@@ -13,8 +13,10 @@ class RequestAndResponseCache(models.Model):
 class Chat(models.Model):
     chat_id = models.CharField(max_length=150, primary_key=True)
     display_name = models.CharField(max_length=50, default='Unnamed Chat')
+    description = models.TextField(default='No description available')
     deleted = models.BooleanField(default=False)   
     user_id = models.CharField(max_length=100, db_index=True)
+    is_finished = models.BooleanField(default=False)
 
 class ChatMessage(models.Model):
     message_id = models.AutoField(primary_key=True)

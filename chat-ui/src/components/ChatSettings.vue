@@ -58,33 +58,17 @@
 
 
 <script lang="ts">
+import { post } from '@/utils'
 
 export default {
   props: {
-    chatTitle: {
-      type: String,
-      required: true,
-    },
-    chatDescription: {
-      type: String,
-      required: true,
-    },
-    modelValue: {
-      type: Boolean,
-      default: false
-    },
-    selectedChatModel: {
-      type: String,
-      required: true,
-    },
-    chatModels: {
-      type: Array,
-      required: true,
-    },
-    chatIsFinished: {
-      type: Boolean,
-      required: true,
-    },
+    chatTitle: {type: String, required: true},
+    chatDescription: {type: String, required: true},
+    modelValue: {type: Boolean, default: false},
+    selectedChatModel: {type: String, required: true},
+    chatModels: {type: Array, required: true},
+    chatIsFinished: {type: Boolean, required: true},
+    chatId: {type: String, required: true},
   },
 
   watch: {
@@ -136,19 +120,15 @@ export default {
         return;
       }
 
-
-
       this.$emit('updateChatTitle', this.localTitle);
       this.$emit('updateChatDescription', this.localDescription);
       this.selectedChatModelErrorMessage = "";
-      this.closeDialog();
+
+      post('/configure-chat/' + this.chatId, {'chat_title': this.localTitle, 'chat_description': this.localDescription}, this).then(() => {this.closeDialog();})
     },
     removeChatModel(id: string, title: string) {
       this.$emit('removeChatModel', id, title);
     },
-
-  }
-  ,
-
+  },
 }
 </script>

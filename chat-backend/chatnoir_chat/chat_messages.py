@@ -47,6 +47,39 @@ def send_new_chat_message(request: HttpRequest, chat_id: str):
 
     return JsonResponse({'id': ret.message_id, 'chat_id': chat_id, 'text': ret.text, 'type': ret.type, 'endpoint': ret.endpoint})
 
+def configure_chat(request: HttpRequest, chat_id: str):
+    """
+    Configures the settings of the chat.
+
+    :param request: The http request. Must contain the user_id.
+    :param chat_id: The id of the chat.
+    :return: The response.
+    """
+    chat_id = chat_id_or_none(request, chat_id)
+
+    if not chat_id or type(chat_id) != str:
+        return HttpResponseNotAllowed('Not allowed to see / start this chat')
+
+    request_body = json.loads(request.body.decode('utf-8'))
+
+    chat = Chat.objects.get(chat_id=chat_id)
+
+    if chat.is_finished:
+        return HttpResponseNotAllowed('Chat is already finished')
+
+    if 'chat_title' in request_body:
+        chat.display_name = request_body['chat_title']
+    
+    if 'chat_description' in request_body:
+        chat.description = request_body['chat_description']
+
+    if 'is_finished' in request_body and request_body['is_finished']:
+        chat.is_finished = True
+
+    chat.save()
+
+    return JsonResponse({})
+
 
 def load_chat(request: HttpRequest, chat_id: str):
     """
@@ -66,7 +99,9 @@ def load_chat(request: HttpRequest, chat_id: str):
     for i in ret:
         messages += [{'id': i.message_id, 'text': i.text, 'type': i.type, 'endpoint': i.endpoint, 'chat_id': i.chat_id}]
 
-    ret = {'messages': messages, 'chat_id': chat_id}
+    chat = Chat.objects.get(chat_id=chat_id)
+
+    ret = {'messages': messages, 'chat_id': chat_id, "chat_title": chat.display_name, "chat_description": chat.description, 'chat_is_finished': chat.is_finished}
     if len(messages) > 0:
         ret['selectedChatModel'] = messages[-1]['endpoint']
 
