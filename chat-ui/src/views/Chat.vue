@@ -147,8 +147,6 @@ export default {
       }
       return "Loading..."; // or any placeholder text you prefer
     }
-
-
   },
 
   data: () => ({
@@ -166,7 +164,7 @@ export default {
     selectedTopic: "Obama family tree",
     conversationAnnotation: null as ConversationAnnotation | null,
     utteranceAnnotations: null as UtteranceAnnotation[] | null,
-    chatId: extractChatIdFromUrl(),
+    chat_id: extractChatIdFromUrl(),
     chatTitle: "",
     chatDescription: "",
     annotationView: "conversation",
@@ -174,7 +172,7 @@ export default {
     messageIsLoading: false,
   }),
   beforeMount() {
-    if ('' + this.chatId === 'undefined' || '' + this.chatId === 'null' || '' + this.chatId === '') {
+    if ('' + this.chat_id === 'undefined' || '' + this.chat_id === 'null' || '' + this.chat_id === '') {
       get('/load-chat-models', this)
         .then(() => {
           get('/load-chat/new-chat-id', this).then(this.updateUrl)
@@ -182,19 +180,19 @@ export default {
     } else {
       get('/load-chat-models', this)
         .then(() => {
-          get('/load-chat/' + this.chatId, this).then(this.updateUrl)
+          get('/load-chat/' + this.chat_id, this).then(this.updateUrl)
         });
     }
   },
   methods: {
     setChatisFinished() {
-      post('/finish-chat/' + this.chatId, {}, this).then(() => {
+      post('/finish-chat/' + this.chat_id, {}, this).then(() => {
         this.chatIsFinished = true
       });
     },
     updateUrl() {
-      history.replaceState({'url': '/cc/' + this.chatId}, 'ChatnoirChat', '/cc/' + this.chatId);
-      this.chatId = extractChatIdFromUrl();
+      history.replaceState({'url': '/cc/' + this.chat_id}, 'ChatnoirChat', '/cc/' + this.chat_id);
+      this.chat_id = extractChatIdFromUrl();
 
       if ('' + this.selectedChatModel === '' || '' + this.selectedChatModel === 'undefined' || '' + this.selectedChatModel === 'null') {
         this.selectedChatModel = this.chatModels[0]['id']
@@ -203,13 +201,13 @@ export default {
 
     sendMessage() {
       const message: Message = {
-        id: this.messages.length, chat_id: this.chatId,
+        id: this.messages.length, chat_id: this.chat_id,
         text: this.currentUserMessage, type: "user", topic: this.selectedTopic,
       }
       this.messages.push(message);
       this.messageIsLoading = true;
 
-      post('/send-message/' + this.chatId, {
+      post('/send-message/' + this.chat_id, {
         'message': this.currentUserMessage,
         'endpoint': this.selectedChatModel
       }, this).then((m) => {
@@ -242,14 +240,14 @@ export default {
     },
     updateConversationAnnotation(updatedAnnotation: ConversationAnnotation) {
       this.conversationAnnotation = updatedAnnotation;
-      post('/annotate-chat/' + this.chatId, this.conversationAnnotation, this);
+      post('/annotate-chat/' + this.chat_id, this.conversationAnnotation, this);
     },
     updateCurrentAnnotationMessageId(messageId: number) {
       this.currentAnnotationMessageId = messageId;
     },
     updateUtteranceAnnotations(updatedAnnotations: UtteranceAnnotation[]) {
       this.utteranceAnnotations = updatedAnnotations;
-      post('/annotate-chat/' + this.chatId + '/utterances', this.utteranceAnnotations, this);
+      post('/annotate-chat/' + this.chat_id + '/utterances', this.utteranceAnnotations, this);
     },
 
   },
