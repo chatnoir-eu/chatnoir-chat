@@ -22,3 +22,4 @@ websockets
 ws4py
 pyyaml
 ir_datasets
+ws4py
