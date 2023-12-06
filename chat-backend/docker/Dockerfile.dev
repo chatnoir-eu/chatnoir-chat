@@ -1,16 +1,16 @@
-# docker build -t webis/chatnoir-chat:0.0.2-dev -f chat-backend/docker/Dockerfile.dev .
+# docker build -t webis/chatnoir-chat:0.0.3-dev -f chat-backend/docker/Dockerfile.dev .
 
 FROM ubuntu:22.04
 
 RUN apt-get update \
 	&& apt-get upgrade -y \
-	&& apt-get install -y python3 python3-pip python-is-python3 mysql-client nginx \
+	&& apt-get install -y python3 python3-pip python-is-python3 mysql-client nginx wget curl vim htop bash-completion git \
 	&& apt-get install -y gcc default-libmysqlclient-dev pkg-config \
 	&& rm -Rf /var/cache/apt \
 	&& rm -Rf /root/.cache/pip
 
-ADD requirements.txt /requirements.txt
-ADD chatnoir_chat/chatnoir_chat_nginx.conf /etc/nginx/nginx.conf
+ADD chat-backend/requirements.txt /requirements.txt
+ADD chat-backend/chatnoir_chat/chatnoir_chat_nginx.conf /etc/nginx/nginx.conf
 
 RUN mkdir /var/run/app-uwsgi \
 	&& mkdir -p /usr/share/nginx/logs/ \
@@ -21,9 +21,6 @@ RUN mkdir /var/run/app-uwsgi \
 	&& rm -Rf /root/.cache/pip \
 	&& rm /etc/nginx/sites-enabled/default
 
-
-RUN apt-get install -y wget curl
-
 RUN wget 'https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz' \
     && tar -xf node-v20.10.0-linux-x64.tar.xz \
     && rm node-v20.10.0-linux-x64.tar.xz \
@@ -31,7 +28,7 @@ RUN wget 'https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-x64.tar.xz' \
     && mv node-v20.10.0-linux-x64/lib/node_modules/ /usr/local/lib/ \
     && npm install --global yarn
 
-ADD chat-ui/src/package.json chat-ui/src/yarn.lock chat-ui/src/vite.config.ts chat-ui/src/jest.config.js chat-ui/src/babel.config.js /tmp-del/
+ADD chat-ui/package.json chat-ui/yarn.lock chat-ui/vite.config.ts /tmp-del/
 
 RUN cd /tmp-del \
     && yarn create vuetify \
@@ -42,6 +39,6 @@ RUN cd /tmp-del \
     && mv node_modules/.yarn-integrity /usr/local/lib/node_modules/.yarn-integrity \
     && cd / \
     && rm -R /tmp-del/ \
-    && apt-get install -y vim htop bash-completion \
+    && mkdir -p /chatnoir_chat/logs/ \
     && echo "\n. /usr/share/bash-completion/bash_completion" >> ~/.bashrc
 

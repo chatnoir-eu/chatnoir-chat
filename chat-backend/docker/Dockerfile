@@ -1,4 +1,4 @@
-FROM webis/chatnoir-chat:0.0.2-dev
+FROM webis/chatnoir-chat:0.0.3-dev
 
 ADD chatnoir_chat /chatnoir_chat/chatnoir_chat
 ADD manage.py /chatnoir_chat/manage.py
