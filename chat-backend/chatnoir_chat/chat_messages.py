@@ -86,7 +86,6 @@ def configure_chat(request: HttpRequest, chat_id: str):
 
     return JsonResponse({})
 
-
 def load_chat(request: HttpRequest, chat_id: str):
     """
     Returns the complete chat history for the chat_id.

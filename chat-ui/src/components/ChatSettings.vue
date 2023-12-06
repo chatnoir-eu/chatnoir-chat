@@ -33,8 +33,8 @@
           <v-row><v-col cols="12"><v-switch label="Specify an Topic" v-model="specify_topic"/></v-col></v-row>
           <v-row v-if="specify_topic"><v-col cols="12"><v-autocomplete label="Dataset of the topic" @update:modelValue="changeDataset" v-model="topic_dataset" :items="ir_datasets"/></v-col></v-row>
           <v-row v-if="specify_topic"><v-col cols="12"><v-autocomplete label="Topic" @update:modelValue="changeTopic" v-model="topic_topic" :items="available_topics" item-title="title" item-value="id"/></v-col></v-row>
-          <v-row v-if="show_details"><v-col cols="12"><v-text-field label="Description" disabled v-model="topic_details['description']"/></v-col></v-row>
-          <v-row v-if="show_details"><v-col cols="12"><v-text-field label="Narrative" disabled v-model="topic_details['narrative']"/></v-col></v-row>
+          
+          <topic-overview v-if="show_details" :ir_dataset="topic_dataset" :topic_num="topic_topic"/>
         </v-container>
       </v-card-text>
       <v-card-actions class="justify-end">

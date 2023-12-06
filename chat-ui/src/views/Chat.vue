@@ -6,24 +6,9 @@
     <loading :loading="loading"/>
     <v-container v-if="!loading" class="main-container w-full pt-0">
       <v-row class="pt-2 px-xl-16 d-block text-center">
-        <div class="d-flex justify-space-between" v-if="messages.length > 0">
-          <v-chip v-if="chat_is_finished" class="ma-2" color="success" variant="outlined" size="large">
-            <v-icon start icon="mdi-text"></v-icon>
-            Topic: {{ selectedTopic }}
-          </v-chip>
+        <div class="d-flex justify-space-between" v-if="chat_is_finished">
+          <topic-overview :ir_dataset="annotation_dataset" :topic_num="annotation_topic"/>
         </div>
-
-        <v-select v-if="messages.length == 0 && chat_is_finished" label="Select your Topic"
-                  v-model="selectedTopic"
-                  :items="availableTopics"
-                  :v-if="chat_is_finished"
-                  item-title="title">
-          <template v-slot:item="{ props}">
-            <v-list-item v-bind="props">
-            </v-list-item>
-          </template>
-        </v-select>
-
       </v-row>
 
       <v-row class="px-xl-16" v-for="message in messages" :key="message.id">
@@ -81,16 +66,9 @@
       @openAddChatModelDialogue="addChatModelModalIsOpen = true"
     />
 
-
-    <AssessmentArea v-if="chat_is_finished"
-                    :selectedMessageId="currentAnnotationMessageId"
-                    :annotationView="annotationView"
-                    :conversationAnnotation="conversationAnnotation"
-                    :utteranceAnnotations="utteranceAnnotations"
-                    @update:conversationAnnotation="updateConversationAnnotation"
-                    @update:utteranceAnnotations="updateUtteranceAnnotations"
-                    @update:annotationView="annotationView = $event"
-                    @toggle-drawer="drawerIsOpen = !drawerIsOpen"
+    <AssessmentArea v-if="chat_is_finished" :selectedMessageId="currentAnnotationMessageId"
+                    :annotationView="annotationView" :chatId="chat_id"
+                    @update:annotationView="annotationView = $event" @toggle-drawer="drawerIsOpen = !drawerIsOpen"
     />
 
     <FooterTextarea
@@ -131,14 +109,8 @@ function extractChatIdFromUrl() {
 }
 
 export default {
-  components: {
-    ChatSettings,
-    NavigationDrawer,
-    AssessmentArea,
-    AddChatmodelDialogue,
-    ChatMessage,
-    FooterTextarea,
-    Loading
+  components: {ChatSettings, NavigationDrawer, AssessmentArea, AddChatmodelDialogue,
+               ChatMessage, FooterTextarea, Loading
   },
   computed: {
     selectedChatModelTitle() {
@@ -162,14 +134,12 @@ export default {
     chatModels: [{id: '0', title: 'loading....', isRemovable: true}],
     currentUserMessage: "",
     chat_is_finished: false,
-    availableTopics: [' Web Track 2009', 'Obama family tree'],
-    selectedTopic: "Obama family tree",
-    conversationAnnotation: null as ConversationAnnotation | null,
-    utteranceAnnotations: null as UtteranceAnnotation[] | null,
     chat_id: extractChatIdFromUrl(),
     chat_title: "",
     chat_description: "",
     annotationView: "conversation",
+    annotation_dataset: null,
+    annotation_topic: null,
     currentAnnotationMessageId: -1,
     messageIsLoading: false,
   }),
@@ -204,7 +174,7 @@ export default {
     sendMessage() {
       const message: Message = {
         id: this.messages.length, chat_id: this.chat_id,
-        text: this.currentUserMessage, type: "user", topic: this.selectedTopic,
+        text: this.currentUserMessage, type: "user",
       }
       this.messages.push(message);
       this.messageIsLoading = true;
@@ -240,18 +210,9 @@ export default {
       }
       post('/remove-chat-model', {'id': chatModelId}, this);
     },
-    updateConversationAnnotation(updatedAnnotation: ConversationAnnotation) {
-      this.conversationAnnotation = updatedAnnotation;
-      post('/annotate-chat/' + this.chat_id, this.conversationAnnotation, this);
-    },
     updateCurrentAnnotationMessageId(messageId: number) {
       this.currentAnnotationMessageId = messageId;
     },
-    updateUtteranceAnnotations(updatedAnnotations: UtteranceAnnotation[]) {
-      this.utteranceAnnotations = updatedAnnotations;
-      post('/annotate-chat/' + this.chat_id + '/utterances', this.utteranceAnnotations, this);
-    },
-
   },
 }
 </script>

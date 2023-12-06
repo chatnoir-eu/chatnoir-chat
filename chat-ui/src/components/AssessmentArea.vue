@@ -20,6 +20,23 @@
                     <v-radio label="No" value="No"/>
                   </v-radio-group>
                 </div>
+
+                <div class="d-inline text-center" v-if="question.response_type === 'Likert'">
+                  <h4>{{ question.question_text }}</h4>
+                  <v-radio-group class="d-inline-block" v-model="conversationAnswers[index]" inline>
+                    <v-radio label="1" value="1"/>
+                    <v-radio label="2" value="2"/>
+                    <v-radio label="3" value="3"/>
+                    <v-radio label="4" value="4"/>
+                    <v-radio label="5" value="5"/>
+                  </v-radio-group>
+                </div>
+
+                <div class="d-inline text-center" v-if="question.response_type === 'Text'">
+                  <h4>{{ question.question_text }}</h4>
+                  <v-textarea class="px-xl-16 mt-4" v-model="conversationAnswers[index]" hide-details auto-grow rows="2" max-rows="5" variant="outlined"/>
+                </div>
+
                 <v-divider v-if="index !== conversationAnnotation.length -1" thickness="2" color="black" :key="index" class="my-4"/>
               </div>
             </div>
@@ -37,13 +54,7 @@
                     <v-radio label="No" value="No"/>
                   </v-radio-group>
                 </div>
-                <v-divider
-                    v-if="index !== selectedUtteranceAnnotation.questions.length - 1"
-                    thickness="2"
-                    color="black"
-                    :key="index"
-                    class="my-4"
-                ></v-divider>
+                <v-divider v-if="index !== selectedUtteranceAnnotation.questions.length - 1" thickness="2" color="black" :key="index" class="my-4"/>
               </div>
             </div>
           </v-window-item>
@@ -64,21 +75,23 @@
 
 <script lang="ts">
 import {ConversationAnnotation, UtteranceAnnotation} from '@/types';
+import { post, get } from '@/utils'
 
 export default {
   props: {
     annotationView: {type: String, required: true},
-    conversationAnnotation: {type: Object as () => ConversationAnnotation | null, required: true},
-    utteranceAnnotations: {type: Array as () => UtteranceAnnotation[] | null, required: true},
-    selectedMessageId: {type: Number, required: true}
+    selectedMessageId: {type: Number, required: true},
+    chatId: {type: String, required: true}
   },
-  emits: ['update:conversationAnnotation', 'update:annotationView', 'update:utteranceAnnotations', 'toggle-drawer'],
+  emits: ['update:annotationView', 'toggle-drawer'],
   data() {
     return {
       localInput: this.modelValue,
       localAnnotationView: this.annotationView,
       conversationAnswers: [] as (string | null)[],
       selectedUtteranceAnswers: [] as (string | null)[],
+      conversationAnnotation: [] as ConversationAnnotation | null,
+      utteranceAnnotations: [] as UtteranceAnnotation[] | null,
     };
   },
   computed: {
@@ -104,26 +117,6 @@ export default {
     localAnnotationView(newValue) {
       this.$emit('update:annotationView', newValue);
     },
-    conversationAnnotation: {
-      deep: true,
-      handler() {
-        this.$emit('update:conversationAnnotation', this.conversationAnnotation);
-      }
-    },
-    conversationAnswers: {
-      deep: true,
-      handler() {
-        // Merge questions and answers, then emit
-        if (!this.conversationAnnotation) {
-          return;
-        }
-        const updatedAnnotation = this.conversationAnnotation.map((q, index) => ({
-          ...q,
-          answer: this.conversationAnswers[index]
-        }));
-        this.$emit('update:conversationAnnotation', updatedAnnotation);
-      }
-    },
     selectedUtteranceAnswers: {
       deep: true,
       handler() {
@@ -142,22 +135,10 @@ export default {
         this.$emit('update:utteranceAnnotations', updatedUtteranceAnnotations);
       }
     },
-
-
   },
-  mounted() {
-    if (this.conversationAnnotation !== null) {
-      this.conversationAnswers = this.conversationAnnotation.map(q => q.answer || null);
-    }
-    // Similar initialization for utteranceAnnotations
-    if (this.utteranceAnnotations !== null) {
-       const selectedUtterance = this.utteranceAnnotations.find(UA => UA.utterance_id === this.selectedMessageId);
-        if (selectedUtterance) {
-          this.selectedUtteranceAnswers = selectedUtterance.questions.map(q => q.answer || null);
-        }
-    }
+  beforeMount() {
+    get('/api/annotations-for-chat/' + this.chatId, this);
   },
-
   methods: {},
 };
 </script>
