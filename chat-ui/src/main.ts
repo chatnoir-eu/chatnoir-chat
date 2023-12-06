@@ -15,6 +15,7 @@ import { createRouter,createWebHistory} from 'vue-router'
 // Plugins
 import { registerPlugins } from '@/plugins'
 import LandingPage from "@/views/LandingPage.vue";
+import DocumentPage from "@/views/DocumentPage.vue";
 
 export default function register_app() {
     const app_selector = '#app'
@@ -28,9 +29,10 @@ export default function register_app() {
     console.log('Mount vue app to location: ' + window.location)
 
     const routes = [
-        {path: '/', component: LandingPage},
+      {path: '/', component: LandingPage},
       {path: '/cc', component: Chat},
       {path: '/cc/:chat_id', component: Chat},
+      {path: '/docs', component: DocumentPage},
 
       // Fallback: everything matches to home.
       {path: '/:pathMatch(.*)*', component: LandingPage},

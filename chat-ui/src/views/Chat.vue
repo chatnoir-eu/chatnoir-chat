@@ -1,14 +1,10 @@
 <template>
   <v-app class="d-flex flex-column app-container">
-
-
     <NavigationDrawer v-model="drawerIsOpen"/>
     <loading :loading="loading"/>
     <v-container v-if="!loading" class="main-container w-full pt-0">
-      <v-row class="pt-2 px-xl-16 d-block text-center">
-        <div class="d-flex justify-space-between" v-if="chat_is_finished">
-          <topic-overview :ir_dataset="annotation_dataset" :topic_num="annotation_topic"/>
-        </div>
+      <v-row class="pt-2">
+        <topic-overview :ir_dataset="annotation_dataset" :topic_num="annotation_topic"/>
       </v-row>
 
       <v-row class="px-xl-16" v-for="message in messages" :key="message.id">
@@ -52,11 +48,9 @@
     </v-container>
     <AddChatmodelDialogue v-model="addChatModelModalIsOpen" :addNewChatModelFunction="addNewChatModel"/>
     <ChatSettings
+      v-if="chatSettingsModalIsOpen"
       v-model="chatSettingsModalIsOpen"
-      :chatTitle="chat_title"
-      :chatDescription="chat_description"
       :chatModels="chatModels"
-      :selectedChatModel="selectedChatModel"
       :chatIsFinished="chat_is_finished"
       :chatId="chat_id"
       @updateChatTitle="chat_title = $event"
@@ -96,6 +90,7 @@ import NavigationDrawer from "@/components/NavigationDrawer.vue";
 import {get, post, avatar_src} from "@/utils";
 import {ConversationAnnotation, Message, UtteranceAnnotation} from '@/types';
 import ChatSettings from "@/components/ChatSettings.vue";
+import TopicOverview from "@/components/TopicOverview.vue";
 
 
 function extractChatIdFromUrl() {
@@ -110,7 +105,7 @@ function extractChatIdFromUrl() {
 
 export default {
   components: {ChatSettings, NavigationDrawer, AssessmentArea, AddChatmodelDialogue,
-               ChatMessage, FooterTextarea, Loading
+               ChatMessage, FooterTextarea, Loading, TopicOverview
   },
   computed: {
     selectedChatModelTitle() {

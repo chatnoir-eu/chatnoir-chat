@@ -9,8 +9,8 @@
         <v-container>
           <v-row>
             <v-col cols="12">
-              <v-text-field v-model="localTitle" label="Title of Conversation"/>
-              <v-text-field v-model="localDescription" label="Description"/>
+              <v-text-field v-model="chat_title" label="Title of Conversation"/>
+              <v-text-field v-model="chat_description" label="Description"/>
               <v-select v-if="!chatIsFinished" label="Select Chatmodel" v-model="selectedChatModelState" :items="chatModels" item-title="title" item-value="id" :error-messages="selectedChatModelErrorMessage">
                 <template v-slot:item="{ props, item }">
                   <v-list-item v-bind="props" :subtitle="item.raw.isRemovable">
@@ -31,10 +31,10 @@
           </v-row>
 
           <v-row><v-col cols="12"><v-switch label="Specify an Topic" v-model="specify_topic"/></v-col></v-row>
-          <v-row v-if="specify_topic"><v-col cols="12"><v-autocomplete label="Dataset of the topic" @update:modelValue="changeDataset" v-model="topic_dataset" :items="ir_datasets"/></v-col></v-row>
-          <v-row v-if="specify_topic"><v-col cols="12"><v-autocomplete label="Topic" @update:modelValue="changeTopic" v-model="topic_topic" :items="available_topics" item-title="title" item-value="id"/></v-col></v-row>
+          <v-row v-if="specify_topic"><v-col cols="12"><v-autocomplete label="Dataset of the topic" @update:modelValue="changeDataset" v-model="annotation_dataset" :items="ir_datasets"/></v-col></v-row>
+          <v-row v-if="specify_topic"><v-col cols="12"><v-autocomplete label="Topic" v-model="annotation_topic" :items="available_topics" item-title="title" item-value="id"/></v-col></v-row>
           
-          <topic-overview v-if="show_details" :ir_dataset="topic_dataset" :topic_num="topic_topic"/>
+          <topic-overview :ir_dataset="annotation_dataset" :topic_num="annotation_topic"/>
         </v-container>
       </v-card-text>
       <v-card-actions class="justify-end">
@@ -48,32 +48,19 @@
 
 <script lang="ts">
 import { post, get } from '@/utils'
+import TopicOverview from "@/components/TopicOverview.vue";
 
 export default {
   props: {
-    chatTitle: {type: String, required: true},
-    chatDescription: {type: String, required: true},
-    modelValue: {type: Boolean, default: false},
-    selectedChatModel: {type: String, required: true},
+    chatId: {type: String, required: true},
     chatModels: {type: Array, required: true},
     chatIsFinished: {type: Boolean, required: true},
-    chatId: {type: String, required: true},
   },
-
+  components: {TopicOverview},
   watch: {
-    modelValue(newValue) {
-      if (newValue) { // if dialog is being opened, reset the values to the values from the parent component
-        this.localTitle = this.chatTitle;
-        this.localDescription = this.chatDescription;
-        this.localSelectedChatModel = this.selectedChatModel;
-      }
-    }
+    chatId(newValue) { this.fetchData() }
   },
-
   computed: {
-    show_details() {
-      return this.topic_details && this.topic_details['description'] + '' !== 'null' && this.topic_details['description'] + '' !== 'loading' && this.topic_details['description'] + '' !== 'undefined';
-    },
     dialogState: {
       get() {
         return this.modelValue;
@@ -94,34 +81,31 @@ export default {
   emits: ['removeChatModel','updateChatTitle', 'updateChatDescription', 'update:modelValue', 'updateSelectedChatModel', 'openAddChatModelDialogue'],
   data() {
     return {
-      localTitle: this.chatTitle,
-      localDescription: this.chatDescription,
-      localSelectedChatModel: this.selectedChatModel,
-      selectedChatModelErrorMessage: "",
+      chat_title: '',
+      chat_description: '',
+      annotation_dataset: null,
+      annotation_topic: null,
       specify_topic: false,
-      topic_dataset: null,
+      selectedChatModelErrorMessage: "",
       ir_datasets: ['loading', 'loading'],
       available_topics: [{'id': 1, 'title': 'loading'}, {'id': 2, 'title': 'loading'}],
-      topic_topic: null,
-      topic_details: {'title': 'loading', 'description': 'loading', 'narrative': 'loading'}
     }
   },
   beforeMount() {
-    get('/api/ir-datasets', this);
+    this.fetchData()
   },
   methods: {
+    fetchData() {
+      get('/load-chat/' + this.chatId, this).then(() => 
+      get('/api/ir-datasets?id=' + this.annotation_dataset, this))
+    },
     closeDialog() {
       this.dialogState = false;
     },
     changeDataset(ir_datasets_id:any) {
       this.available_topics = []
-      this.topic_topic = null
-      this.topic_details = {'title': 'loading', 'description': 'loading', 'narrative': 'loading'}
+      this.annotation_topic = null
       get('/api/ir-datasets?id=' + ir_datasets_id, this);
-    },
-    changeTopic(topic_id: any) {
-      this.topic_details = {'title': 'loading', 'description': 'loading', 'narrative': 'loading'}
-      get('/api/ir-datasets?id=' + this.topic_dataset + '&topic_id=' + topic_id, this);
     },
     saveChanges() {
       if (this.selectedChatModelState === "") {
@@ -129,13 +113,13 @@ export default {
         return;
       }
 
-      this.$emit('updateChatTitle', this.localTitle);
-      this.$emit('updateChatDescription', this.localDescription);
+      this.$emit('updateChatTitle', this.chat_title);
+      this.$emit('updateChatDescription', this.chat_description);
       this.selectedChatModelErrorMessage = "";
-      let config = {'chat_title': this.localTitle,
-                    'chat_description': this.localDescription,
-                    'annotation_dataset': this.topic_dataset,
-                    'annotation_topic': this.topic_topic,
+      let config = {'chat_title': this.chat_title,
+                    'chat_description': this.chat_description,
+                    'annotation_dataset': this.annotation_dataset,
+                    'annotation_topic': this.annotation_topic,
                    }
 
       post('/configure-chat/' + this.chatId, config, this).then(() => {this.closeDialog();})
