@@ -1,17 +1,10 @@
 <template>
   <div class="fixed-input">
-    <v-divider
-        thickness="4"
-        color="black"
-    >
+    <v-divider thickness="4" color="black">
     </v-divider>
     <v-card>
       <h3 class="text-center">Assessment Area</h3>
-      <v-tabs
-          v-model="localAnnotationView"
-          color="red"
-          align-tabs="center"
-      >
+      <v-tabs v-model="localAnnotationView" color="red" align-tabs="center">
         <v-tab value="conversation">Conversation</v-tab>
         <v-tab value="utterance">Single Utterance</v-tab>
       </v-tabs>
@@ -22,29 +15,12 @@
               <div v-for="(question, index) in conversationAnnotation" :key="question.question_id">
                 <div class="d-inline text-center" v-if="question.response_type === 'Yes/No'">
                   <h4>{{ question.question_text }}</h4>
-                  <v-radio-group
-                      class="d-inline-block"
-                      v-model="conversationAnswers[index]"
-                      inline
-                  >
-                    <v-radio
-                        label="Yes"
-                        value="Yes"
-                    ></v-radio>
-                    <v-radio
-                        label="No"
-                        value="No"
-                    ></v-radio>
+                  <v-radio-group class="d-inline-block" v-model="conversationAnswers[index]" inline>
+                    <v-radio label="Yes" value="Yes"/>
+                    <v-radio label="No" value="No"/>
                   </v-radio-group>
-
                 </div>
-                <v-divider
-                    v-if="index !== conversationAnnotation.length -1"
-                    thickness="2"
-                    color="black"
-                    :key="index"
-                    class="my-4"
-                ></v-divider>
+                <v-divider v-if="index !== conversationAnnotation.length -1" thickness="2" color="black" :key="index" class="my-4"/>
               </div>
             </div>
           </v-window-item>
@@ -56,19 +32,9 @@
                    :key="question.question_id">
                 <div class="d-inline text-center" v-if="question.response_type === 'Yes/No'">
                   <h4>{{ question.question_text }}</h4>
-                  <v-radio-group
-                      class="d-inline-block"
-                      v-model="selectedUtteranceAnswers[index]"
-                      inline
-                  >
-                    <v-radio
-                        label="Yes"
-                        value="Yes"
-                    ></v-radio>
-                    <v-radio
-                        label="No"
-                        value="No"
-                    ></v-radio>
+                  <v-radio-group class="d-inline-block" v-model="selectedUtteranceAnswers[index]" inline>
+                    <v-radio label="Yes" value="Yes"/>
+                    <v-radio label="No" value="No"/>
                   </v-radio-group>
                 </div>
                 <v-divider
@@ -82,6 +48,13 @@
             </div>
           </v-window-item>
         </v-window>
+        <div class="d-flex justify-space-between px-xl-16 my-2 " style="font-size: .7em;">
+          <v-btn class="my-2" variant="tonal" size="x-small" @click="$emit('toggle-drawer')">
+            <v-icon>mdi-history</v-icon>
+            History
+          </v-btn>
+        </div>
+
       </v-card-text>
     </v-card>
 
@@ -94,25 +67,12 @@ import {ConversationAnnotation, UtteranceAnnotation} from '@/types';
 
 export default {
   props: {
-    annotationView: {
-      type: String,
-      required: true
-    },
-    conversationAnnotation: {
-      type: Object as () => ConversationAnnotation | null,
-      required: true
-    },
-    utteranceAnnotations: {
-      type: Array as () => UtteranceAnnotation[] | null,
-      required: true
-    },
-    selectedMessageId: {
-      type: Number,
-      required: true
-    }
+    annotationView: {type: String, required: true},
+    conversationAnnotation: {type: Object as () => ConversationAnnotation | null, required: true},
+    utteranceAnnotations: {type: Array as () => UtteranceAnnotation[] | null, required: true},
+    selectedMessageId: {type: Number, required: true}
   },
-  emits: ['update:conversationAnnotation', 'update:annotationView', 'update:utteranceAnnotations'],
-
+  emits: ['update:conversationAnnotation', 'update:annotationView', 'update:utteranceAnnotations', 'toggle-drawer'],
   data() {
     return {
       localInput: this.modelValue,

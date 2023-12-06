@@ -76,6 +76,12 @@ def configure_chat(request: HttpRequest, chat_id: str):
     if 'is_finished' in request_body and request_body['is_finished']:
         chat.is_finished = True
 
+    if 'annotation_dataset' in request_body:
+        chat.annotation_dataset = request_body['annotation_dataset']
+
+    if 'annotation_topic' in request_body:
+        chat.annotation_topic = request_body['annotation_topic']
+
     chat.save()
 
     return JsonResponse({})
@@ -101,7 +107,11 @@ def load_chat(request: HttpRequest, chat_id: str):
 
     chat = Chat.objects.get(chat_id=chat_id)
 
-    ret = {'messages': messages, 'chat_id': chat_id, "chat_title": chat.display_name, "chat_description": chat.description, 'chat_is_finished': chat.is_finished}
+    ret = {'messages': messages, 'chat_id': chat_id, "chat_title": chat.display_name, "chat_description": chat.description,
+           'chat_is_finished': chat.is_finished, 'topic_dataset': chat.annotation_dataset, 'topic_topic': chat.annotation_topic,
+           'annotation_dataset': chat.annotation_dataset, 'annotation_topic': chat.annotation_topic,
+           'specify_topic': chat.annotation_dataset is not None and chat.annotation_topic is not None
+          }
     if len(messages) > 0:
         ret['selectedChatModel'] = messages[-1]['endpoint']
 

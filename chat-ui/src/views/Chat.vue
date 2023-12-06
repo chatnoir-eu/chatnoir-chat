@@ -90,6 +90,7 @@
                     @update:conversationAnnotation="updateConversationAnnotation"
                     @update:utteranceAnnotations="updateUtteranceAnnotations"
                     @update:annotationView="annotationView = $event"
+                    @toggle-drawer="drawerIsOpen = !drawerIsOpen"
     />
 
     <FooterTextarea

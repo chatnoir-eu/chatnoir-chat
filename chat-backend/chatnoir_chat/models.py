@@ -17,6 +17,8 @@ class Chat(models.Model):
     deleted = models.BooleanField(default=False)   
     user_id = models.CharField(max_length=100, db_index=True)
     is_finished = models.BooleanField(default=False)
+    annotation_dataset = models.CharField(max_length=50, default=None, null=True)
+    annotation_topic = models.CharField(max_length=50, default=None, null=True)
 
 class ChatMessage(models.Model):
     message_id = models.AutoField(primary_key=True)

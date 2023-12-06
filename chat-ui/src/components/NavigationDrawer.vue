@@ -7,7 +7,7 @@
     <v-divider></v-divider>
 
     <v-list density="compact" nav>
-      <v-list-item href="/" prepend-icon="mdi-plus" title="New Chat" value="home"></v-list-item>
+      <v-list-item href="/cc/new-chat" prepend-icon="mdi-plus" title="New Chat" value="home"></v-list-item>
       <v-divider></v-divider>
       <v-list-subheader>Your History</v-list-subheader>
 
