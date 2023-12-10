@@ -24,6 +24,6 @@ urlpatterns = [
 
     path('', veutify_page, name='index'),
     path('cc/', veutify_page, name='vuetify_page'),
-    path('docs', veutify_page, name='vuetify_page'),
+    path('datasets/docs', veutify_page, name='vuetify_page'),
     re_path(r'^cc/.*', veutify_page, name='vuetify_page'),
 ]

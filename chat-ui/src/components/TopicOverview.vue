@@ -12,7 +12,7 @@
 
       <v-data-table :items="qrels" :items-per-page="5">
         <template #item.Document="{ item }">
-          <a target="_blank" :href="'/docs?ir_dataset_id=' + ir_dataset + '&doc_id=' + item['Document']">{{ item["Document"] }}</a>
+          <a target="_blank" :href="'/datasets/docs?ir_dataset_id=' + ir_dataset + '&doc_id=' + item['Document']">{{ item["Document"] }}</a>
         </template>
       </v-data-table>
     </div>

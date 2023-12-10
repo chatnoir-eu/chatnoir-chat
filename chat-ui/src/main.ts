@@ -32,7 +32,7 @@ export default function register_app() {
       {path: '/', component: LandingPage},
       {path: '/cc', component: Chat},
       {path: '/cc/:chat_id', component: Chat},
-      {path: '/docs', component: DocumentPage},
+      {path: '/datasets/docs', component: DocumentPage},
 
       // Fallback: everything matches to home.
       {path: '/:pathMatch(.*)*', component: LandingPage},
