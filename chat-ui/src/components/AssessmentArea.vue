@@ -100,9 +100,7 @@ export default {
         return null;
       }
 
-      const selectedUtteranceQuestions = this.utteranceAnnotations.find(ua => ua.utterance_id === this.selectedMessageId);
-
-      return selectedUtteranceQuestions || null;
+      return this.utteranceAnnotations;
     }
   },
   watch: {

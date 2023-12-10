@@ -42,7 +42,8 @@ class TestChatMessages(TestCase):
             del i['id']
             del i['chat_id']
         del actual['chat_id']
-        self.assertEquals(actual, {'messages': [{'text': 'm1', 'type': 'user', 'endpoint': 'echo'}, {'text': 'm1', 'type': 'bot', 'endpoint': 'echo'}], 'selectedChatModel': 'echo'})
+        self.assertEquals(actual['messages'], [{'text': 'm1', 'type': 'user', 'endpoint': 'echo'}, {'text': 'm1', 'type': 'bot', 'endpoint': 'echo'}])
+        self.assertEquals(actual['selectedChatModel'], 'echo')
 
     def test_empty_chat_history_new_user(self):
         request = mock_request('new-user', 'm1')

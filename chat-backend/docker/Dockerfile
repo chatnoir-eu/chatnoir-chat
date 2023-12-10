@@ -9,7 +9,6 @@ ADD chatnoir_chat/uwsgi.ini /chatnoir_chat/uwsgi.ini
 ADD chatnoir_chat/static/ui/ /var/www/static
 
 RUN cd /chatnoir_chat/ \
-	&& mkdir /chatnoir_chat/logs \
 	&& DJANGO_SETTINGS_MODULE=tests.settings_test python3 manage.py reset_db --no-input \
 	&& DJANGO_SETTINGS_MODULE=tests.settings_test python3 manage.py makemigrations chatnoir_chat \
 	&& DJANGO_SETTINGS_MODULE=tests.settings_test python3 manage.py migrate chatnoir_chat \

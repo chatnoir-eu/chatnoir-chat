@@ -7,7 +7,7 @@ Components:
 
 ### Build everything
 
-docker build -t webis/chatnoir-chat:0.0.1 -f docker/Dockerfile .
+docker build -t webis/chatnoir-chat:0.0.3 -f docker/Dockerfile .
 
 ### Update the development container
 
