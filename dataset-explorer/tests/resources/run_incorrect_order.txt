@@ -1,0 +1,5 @@
+1 Q0 doc1 1 6.3 system
+1 Q0 doc2 2 6.4 system
+2 Q0 doc3 1 8 system
+2 Q0 doc4 2 5 system
+1 Q0 doc3 3 5 system
