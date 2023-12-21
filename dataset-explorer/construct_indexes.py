@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import json
+import pandas as pd
 
 DATASET_IDS = ['argsme-touche-2020-task-1-20230209-training']
 CORPUS = []
@@ -173,4 +174,19 @@ class ArchivedDataset(NamedTuple):
 
 
 def process_archive(archive_dataset: ArchivedDataset):
-    pass
+    qrels_index = parse_qrels(archive_dataset.qrels_local_copy)
+    topics_index = parse_topics(archive_dataset.topics_local_copy)
+    documents_index = parse_documents(archive_dataset.documents_local_copy)
+    runs = {i.name: {'index': parse_run(i.local_copy), 'url': i.url} for i in archive_dataset.runs}
+    topics_entrypoint = pd.read_json(archive_dataset.topics_local_copy, lines=True, dtype={'qid': str, 'query': str})
+    topics_entrypoint['offset'] = topics_entrypoint['qid'].apply(lambda i: topics_index[i])
+
+    ret = {
+        'qrels': {'index': qrels_index, 'url': archive_dataset.qrels_url},
+        'topics': {'index': topics_index, 'url': archive_dataset.topics_url},
+        'documents': {'index': documents_index, 'url': archive_dataset.documents_url},
+        'runs': runs,
+        'topics_entrypoint': {'ir_datasets_id': 'argsme/2020-04-01/touche-2020-task-1', 'display_name': 'Touche 2020 Task 1', 'url': archive_dataset.qrels_url, 'topics': [i.to_dict() for _, i in topics_entrypoint.iterrows()]},
+    }
+    
+    return ret

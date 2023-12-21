@@ -1,0 +1,107 @@
+{
+    "documents": {
+        "index": {
+            "doc-1": {
+                "end": 150,
+                "start": 0
+            },
+            "doc-2": {
+                "end": 282,
+                "start": 150
+            },
+            "doc-3": {
+                "end": 379,
+                "start": 282
+            },
+            "doc-4": {
+                "end": 542,
+                "start": 379
+            },
+            "doc-5": {
+                "end": 742,
+                "start": 542
+            },
+            "doc-6": {
+                "end": 884,
+                "start": 742
+            }
+        },
+        "url": "url-here"
+    },
+    "qrels": {
+        "index": {
+            "q1": {
+                "end": 29,
+                "start": 0
+            },
+            "q2": {
+                "end": 49,
+                "start": 30
+            }
+        },
+        "url": "url-here"
+    },
+    "runs": {
+        "run-1": {
+            "index": {
+                "1": {
+                    "end": 45,
+                    "start": 0
+                },
+                "2": {
+                    "end": 88,
+                    "start": 46
+                }
+            },
+            "url": "url-here"
+        }
+    },
+    "topics": {
+        "index": {
+            "1": {
+                "end": 55,
+                "start": 0
+            },
+            "2": {
+                "end": 97,
+                "start": 55
+            },
+            "3": {
+                "end": 140,
+                "start": 97
+            }
+        },
+        "url": "url-here"
+    },
+    "topics_entrypoint": {
+        "display_name": "Touche 2020 Task 1",
+        "ir_datasets_id": "argsme/2020-04-01/touche-2020-task-1",
+        "topics": [
+            {
+                "offset": {
+                    "end": 55,
+                    "start": 0
+                },
+                "qid": "1",
+                "query": "hubble telescope achievements"
+            },
+            {
+                "offset": {
+                    "end": 97,
+                    "start": 55
+                },
+                "qid": "2",
+                "query": "how to exit vim?"
+            },
+            {
+                "offset": {
+                    "end": 140,
+                    "start": 97
+                },
+                "qid": "3",
+                "query": "signs heart attack"
+            }
+        ],
+        "url": "url-here"
+    }
+}
