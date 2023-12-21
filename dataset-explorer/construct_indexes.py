@@ -4,7 +4,9 @@ import json
 
 DATASET_IDS = ['argsme-touche-2020-task-1-20230209-training']
 CORPUS = []
-from typing import Dict
+from pathlib import Path
+from typing import Dict, NamedTuple, List
+
 
 def extract_from_file(path: Path, start: int, end: int) -> str:
     """
@@ -86,6 +88,30 @@ def parse_topics(path: Path) -> Dict:
 
     return ret
 
+def parse_documents(path: Path) -> Dict:
+    """
+    Parses a documents file and returns a dictionary with the document id as key and the byte range as value.
+     
+    This method is inspired by indxr, please cite: https://github.com/AmenRa/indxr
+
+    :param path: Path to the document file in jsonl format as used in TIREx
+    :return: Dictionary with the document id as key and the byte range as value
+    """
+    ret = {}
+
+    with open(path, "rb") as file:
+        position = file.tell()
+
+        for _, line in enumerate(file):
+            q = json.loads(line.decode())['docno']
+            
+            if q is None or q in ret:
+                raise ValueError(f'Documents contains duplicate or null document ids. Got {q}')
+
+            ret[q] = {'start': position, 'end': file.tell()}
+            position = file.tell()
+
+    return ret
 
 def parse_run(path: Path) -> Dict:
     """
@@ -129,4 +155,22 @@ def parse_run(path: Path) -> Dict:
             ret[current_query_id] = {'start': start, 'end': file.tell()}
 
     return ret
-    
+
+class ArchivedRun(NamedTuple):
+    name: str
+    url: str
+    local_copy: Path
+
+
+class ArchivedDataset(NamedTuple):
+    qrels_url: str
+    qrels_local_copy: Path
+    topics_url: str
+    topics_local_copy: Path
+    documents_url: str
+    documents_local_copy: Path
+    runs: List[ArchivedRun]
+
+
+def process_archive(archive_dataset: ArchivedDataset):
+    pass
